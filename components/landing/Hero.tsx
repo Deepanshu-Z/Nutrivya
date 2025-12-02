@@ -2,7 +2,7 @@ import { Mail, SendHorizonal } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { TextEffect } from "@/components/ui/text-effect";
 import { AnimatedGroup } from "@/components/ui/animated-group";
-import { Logo } from "@/components/logo";
+import { Logo } from "@/components/landing/logo";
 
 const transitionVariants = {
   item: {
