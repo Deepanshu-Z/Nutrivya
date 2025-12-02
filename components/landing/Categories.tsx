@@ -11,7 +11,7 @@ export default function Categories() {
       image: "/categories/shoes.jpg",
     },
     {
-      name: "Performance",
+      name: "Suppliments",
       image: "/categories/wallets.jpg",
     },
     {
