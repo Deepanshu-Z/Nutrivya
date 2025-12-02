@@ -5,13 +5,16 @@ import Image from "next/image";
 import LandingProduct from "@/components/landing/LandingProduct";
 import Products from "@/components/landing/Products";
 import Integrations from "@/components/landing/Integrations";
+import Features from "@/components/landing/Features";
+import Categories from "@/components/landing/Categories";
 
 export default function Home() {
   return (
     <div>
       <Hero />
-      <Integrations />
+      <Features />
       <Products />
+      <Categories />
       <Testimonial />
     </div>
   );

@@ -10,6 +10,7 @@ import { cn } from "@/lib/utils";
 import { LogoIcon } from "@/components/logo";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import Features from "./Features";
 
 export default function Integrations() {
   return (
@@ -54,19 +55,6 @@ export default function Integrations() {
                 <GooglePaLM />
               </IntegrationCard>
             </div>
-          </div>
-          <div className="mx-auto mt-12 max-w-lg space-y-6 text-center">
-            <h2 className="text-balance text-3xl font-semibold md:text-4xl">
-              Integrate with your favorite tools
-            </h2>
-            <p className="text-muted-foreground">
-              Connect seamlessly with popular platforms and services to enhance
-              your workflow.
-            </p>
-
-            <Button variant="outline" size="sm" asChild>
-              <Link href="#">Get Started</Link>
-            </Button>
           </div>
         </div>
       </div>
