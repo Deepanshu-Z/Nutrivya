@@ -36,7 +36,12 @@ export default function Display() {
           </div>
 
           <div className="mt-6">
-            <Button type="button" variant="outline" className="w-full">
+            <Button
+              onClick={() => signIn("google", { callbackUrl: "/" })}
+              type="button"
+              variant="outline"
+              className="w-full"
+            >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="0.98em"
