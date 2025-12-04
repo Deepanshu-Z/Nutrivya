@@ -8,7 +8,7 @@ const categories = [
 ] as const;
 const form = ["powder", "capsule", "tablet", "liquid"] as const;
 
-const productSchema = z.object({
+export const productSchema = z.object({
   name: z.string().min(1, "Name is required"),
   price: z.number().min(0, "Price is required"),
   discountPrice: z

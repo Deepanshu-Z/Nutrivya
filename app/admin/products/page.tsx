@@ -1,32 +1,50 @@
 "use client";
-import { useForm, SubmitHandler } from "react-hook-form";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
 
-type Inputs = {
-  example: string;
-  exampleRequired: string;
-};
+const productSchema = z.object({
+  name: z.string().min(1, "Name is required"),
+  price: z.number().min(1, "Price must be > 0"),
+  stock: z.number().min(0, "Stock cannot be negative"),
+  description: z.string().min(5, "Description must be at least 5 chars"),
+});
 
 export default function App() {
   const {
     register,
     handleSubmit,
-    watch,
     formState: { errors },
-  } = useForm<Inputs>();
-  const onSubmit: SubmitHandler<Inputs> = (data) => console.log(data);
+  } = useForm({
+    resolver: zodResolver(productSchema),
+  });
 
   return (
-    /* "handleSubmit" will validate your inputs before invoking "onSubmit" */
-    <form className="pt-50" onSubmit={handleSubmit(onSubmit)}>
-      {/* register your input into the hook by invoking the "register" function */}
-      <input defaultValue="test" {...register("example")} />
+    <form
+      className="pt-50"
+      onSubmit={handleSubmit((data) => console.log(data))}
+    >
+      <input {...register("name")} placeholder="Name" />
+      <p>{errors.name?.message}</p>
 
-      {/* include validation with required or other standard HTML validation rules */}
-      <input {...register("exampleRequired", { required: true })} />
-      {/* errors will return when field validation fails  */}
-      {errors.exampleRequired && <span>This field is required</span>}
+      <input
+        type="number"
+        {...register("price", { valueAsNumber: true })}
+        placeholder="Price"
+      />
+      <p>{errors.price?.message}</p>
 
-      <input type="submit" />
+      <input
+        type="number"
+        {...register("stock", { valueAsNumber: true })}
+        placeholder="Stock"
+      />
+      <p>{errors.stock?.message}</p>
+
+      <input {...register("description")} placeholder="Description" />
+      <p>{errors.description?.message}</p>
+
+      <button type="submit">Submit</button>
     </form>
   );
 }
