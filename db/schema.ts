@@ -120,7 +120,7 @@ export const products = pgTable("products", {
 
   inStock: boolean("in_stock").notNull().default(true),
 
-  images: jsonb("images").notNull().$type<string[]>(),
+  images: jsonb("images").$type<string[]>().default([]),
 
   // Supplement-specific
   form: varchar("form", { length: 50 }), // powder | capsule | tablet | liquid

@@ -2,7 +2,7 @@ import db from "@/db/db";
 import { products } from "@/db/schema";
 import { NextResponse } from "next/server";
 
-export default async function POST(request: Request) {
+export async function POST(request: Request) {
   const {
     name,
     category,
@@ -23,6 +23,10 @@ export default async function POST(request: Request) {
     manufacturedDate,
     createdAt,
   } = await request.json();
+  console.log("@@@@@@@", name);
+  const newExpiryDate = new Date(expiryDate);
+  const newManufacturedDate = new Date(manufacturedDate);
+
   try {
     const response = await db.insert(products).values({
       name,
@@ -39,19 +43,21 @@ export default async function POST(request: Request) {
       warnings,
       directions,
       certifications,
-      expiryDate,
-      manufacturedDate,
+      expiryDate: newExpiryDate,
+      manufacturedDate: newManufacturedDate,
       createdAt,
     });
+
     return NextResponse.json({
       success: true,
       data: response,
       message: "Product added successfully",
     });
   } catch (error) {
+    console.log(error);
     return NextResponse.json({
       success: false,
-      error,
+      error: error,
       message: "Error adding product: Internal Server Error",
     });
   }
