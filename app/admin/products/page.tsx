@@ -1,7 +1,7 @@
 "use client";
 import { useForm } from "react-hook-form";
-import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import z from "zod";
 
 const productSchema = z.object({
   name: z.string().min(1, "Name is required"),
