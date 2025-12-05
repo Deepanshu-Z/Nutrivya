@@ -1,6 +1,6 @@
 import * as z from "zod";
 
-const categories = [
+export const categories = [
   "Uncategorized",
   "Health & Fitness",
   "Suppliments",
@@ -8,40 +8,38 @@ const categories = [
   "Hygiene",
 ] as const;
 
-const form = ["powder", "capsule", "tablet", "liquid"] as const;
+export const form = ["powder", "capsule", "tablet", "liquid"] as const;
 
-export const productSchema = z
-  .object({
-    name: z.string().min(1, "Name is required"),
-    price: z.number().min(0, "Price is required"),
+export const productSchema = z.object({
+  name: z.string().min(1, "Name is required"),
+  price: z.number().min(0, "Price is required"),
 
-    discountPrice: z.number().positive().optional(),
+  discountPrice: z.number().positive().optional(),
 
-    description: z.string().min(1, "Description is required"),
-    stock: z.number().min(0, "Stock cannot be negative"),
+  description: z.string().min(1, "Description is required"),
+  stock: z.number().min(0, "Stock cannot be negative"),
 
-    category: z.enum(categories).default("Uncategorized"),
-    form: z.enum(form).default("capsule"),
+  category: z.enum(categories).default("Uncategorized"),
+  form: z.enum(form).default("capsule"),
 
-    inStock: z.boolean().default(true),
+  inStock: z.boolean().default(true),
 
-    images: z.array(z.string()).optional(),
-    goal: z.array(z.string()),
-    ingredients: z.array(z.string()),
-    allergens: z.array(z.string()),
-    directions: z.string().min(1, "Directions are required"),
-    certifications: z.array(z.string()),
+  images: z
+    .string()
+    .transform((val) => val.split(",").map((s) => s.trim()))
+    .optional(),
+  goal: z.string().transform((val) => val.split(",").map((s) => s.trim())),
+  ingredients: z
+    .string()
+    .transform((val) => val.split(",").map((s) => s.trim())),
+  allergens: z.string().transform((val) => val.split(",").map((s) => s.trim())),
+  directions: z.string().min(1, "Directions are required"),
+  certifications: z
+    .string()
+    .transform((val) => val.split(",").map((s) => s.trim())),
 
-    expiryDate: z.coerce.date(),
-    manufacturedDate: z.coerce.date(),
-  })
-  .refine((data) => !data.discountPrice || data.discountPrice < data.price, {
-    message: "Discount price must be less than original price",
-    path: ["discountPrice"],
-  })
-  .refine((data) => data.stock > 0 || !data.inStock, {
-    message: "inStock cannot be true when stock is 0",
-    path: ["inStock"],
-  });
+  expiryDate: z.coerce.date(),
+  manufacturedDate: z.coerce.date(),
+});
 
 export type ProductInput = z.infer<typeof productSchema>;

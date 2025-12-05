@@ -3,40 +3,11 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import z from "zod";
 import axios from "axios";
-const categories = [
-  "Uncategorized",
-  "Health & Fitness",
-  "Suppliments",
-  "Skin",
-  "Hygiene",
-] as const;
-
-const form = ["powder", "capsule", "tablet", "liquid"] as const;
-
-const productSchema = z.object({
-  name: z.string().min(1, "Name is required"),
-  price: z.number().min(0, "Price is required"),
-
-  discountPrice: z.number().positive().optional(),
-
-  description: z.string().min(1, "Description is required"),
-  stock: z.number().min(0, "Stock cannot be negative"),
-
-  category: z.enum(categories).default("Uncategorized"),
-  form: z.enum(form).default("capsule"),
-
-  inStock: z.boolean().default(true),
-
-  images: z.array(z.string()).optional(),
-  goal: z.array(z.string()),
-  ingredients: z.array(z.string()),
-  allergens: z.array(z.string()),
-  directions: z.string().min(1, "Directions are required"),
-  certifications: z.array(z.string()),
-
-  expiryDate: z.coerce.date(),
-  manufacturedDate: z.coerce.date(),
-});
+import {
+  productSchema,
+  categories,
+  form,
+} from "@/validations/productValidation";
 
 export default function App() {
   const {
