@@ -10,7 +10,7 @@ export async function POST(request: Request) {
     price,
     discountPrice,
     inStock,
-    images,
+    galleryImages,
     brand,
     form,
     goal,
@@ -23,7 +23,7 @@ export async function POST(request: Request) {
     manufacturedDate,
     createdAt,
   } = await request.json();
-  console.log("@@@@@@@", name);
+  console.log("@@@@@@@", galleryImages);
   const newExpiryDate = new Date(expiryDate);
   const newManufacturedDate = new Date(manufacturedDate);
 
@@ -35,7 +35,7 @@ export async function POST(request: Request) {
       price,
       discountPrice,
       inStock,
-      images,
+      galleryImages,
       form,
       goal,
       ingredients,

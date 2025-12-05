@@ -24,7 +24,7 @@ export const productSchema = z.object({
 
   inStock: z.boolean().default(true),
 
-  images: z
+  galleryImages: z
     .string()
     .transform((val) => val.split(",").map((s) => s.trim()))
     .optional(),

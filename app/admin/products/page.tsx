@@ -43,12 +43,15 @@ export default function App() {
 
   async function saveProduct(data: any) {
     console.log("@@@DATA", data);
+    if (imageUrl) data.galleryImages = imageUrl;
     const response = await axios.post("/api/admin/addproduct  ", data);
     console.log(response.data);
     if (response.data.success) console.log("product added!");
     else console.log("Please try again");
   }
-
+  useEffect(() => {
+    console.log("IMages are: ", imageUrl);
+  }, [imageUrl]);
   const uploadAll = async () => {
     if (!files) return alert("Undefined");
     if (files.length === 0) return alert("Select images first");
@@ -381,9 +384,10 @@ export default function App() {
                 />
 
                 <button
+                  type="button"
                   disabled={!files}
                   onClick={uploadAll}
-                  className="px-4 py-2 bg-black text-white rounded"
+                  className="cursor-pointer px-4 py-2 bg-black text-white rounded"
                 >
                   Upload
                 </button>
