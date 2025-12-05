@@ -8,6 +8,22 @@ import {
   categories,
   form,
 } from "@/validations/productValidation";
+import { LogoIcon } from "@/components/logo";
+import Link from "next/link";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { useEffect, useState } from "react";
 
 export default function App() {
   const {
@@ -17,91 +33,373 @@ export default function App() {
   } = useForm({
     resolver: zodResolver(productSchema),
   });
+  const [files, setFiles] = useState<File[]>();
+  const [imageUrl, setImageUrl] = useState<string[]>();
+  const handleSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const selected = e.target.files ? Array.from(e.target.files) : [];
+    setFiles(selected);
+  };
+
   async function saveProduct(data: any) {
     const response = await axios.post("/api/admin/addproduct  ", data);
     console.log(response.data);
     if (response.data.success) console.log("product added!");
     else console.log("Please try again");
   }
+
+  const uploadAll = async () => {
+    if (!files) return alert("Undefined");
+    if (files.length === 0) return alert("Select images first");
+
+    // 1. Get signature
+    const sigRes = await fetch("/api/admin/cloudinary");
+    const { signature, timestamp } = await sigRes.json();
+
+    const uploadedUrls: string[] = [];
+
+    // 2. Loop and upload each image
+    for (const file of files) {
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("api_key", process.env.NEXT_PUBLIC_CLOUDINARY_API_KEY!);
+      formData.append("signature", signature);
+      formData.append("timestamp", timestamp.toString());
+      formData.append("folder", "products");
+
+      const res = await fetch(
+        `https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/image/upload`,
+        {
+          method: "POST",
+          body: formData,
+        }
+      );
+
+      const data = await res.json();
+
+      // Save final URL
+      uploadedUrls.push(data.secure_url);
+    }
+    setImageUrl((prev) => [...(prev ?? []), ...uploadedUrls]);
+  };
+  useEffect(() => {
+    console.log("Updated URLs:", imageUrl);
+  }, [imageUrl]);
+
   return (
-    <form
-      className="pt-50"
-      onSubmit={handleSubmit((data) => saveProduct(data))}
-    >
-      {/* Basic fields */}
-      <input {...register("name")} placeholder="Name" />
-      <p>{errors.name?.message}</p>
+    <section className="flex min-h-screen bg-zinc-50 px-1 py-16 md:py-32 dark:bg-transparent">
+      <form
+        className="bg-white  m-auto h-fit w-full max-w-xl overflow-hidden rounded-[calc(var(--radius)+.125rem)] border shadow-md shadow-zinc-950/5 dark:[--color-muted:var(--color-zinc-900)]"
+        onSubmit={handleSubmit((data) => saveProduct(data))}
+      >
+        <div className="bg-card -m-px rounded-[calc(var(--radius)+.125rem)] border p-8 pb-6">
+          {/* TOP DIV */}
+          <div className="text-center">
+            <Link href="/" aria-label="go home" className="mx-auto block w-fit">
+              <LogoIcon />
+            </Link>
+            <h1 className="mb-1 mt-4 text-xl font-semibold">
+              Create a Tailark Account
+            </h1>
+            <p className="text-sm">Welcome! Create an account to get started</p>
+          </div>
 
-      <input
-        type="number"
-        {...register("price", { valueAsNumber: true })}
-        placeholder="Price"
-      />
-      <p>{errors.price?.message}</p>
+          {/* Basic fields */}
+          <div className="mt-6 space-y-6">
+            <div>
+              <div className="space-y-2">
+                <Label htmlFor="name" className="block text-sm">
+                  Product Name
+                </Label>
+                <Input {...register("name")} placeholder="Name" id="name" />
+                <p>{errors.name?.message}</p>
+              </div>
+            </div>
+          </div>
 
-      <input
-        type="number"
-        {...register("discountPrice", { valueAsNumber: true })}
-        placeholder="Discount(If applicable)"
-      />
-      <p>{errors.price?.message}</p>
-      <input
-        type="number"
-        {...register("stock", { valueAsNumber: true })}
-        placeholder="Stock"
-      />
-      <p>{errors.stock?.message}</p>
+          <div className="mt-1 space-y-6">
+            <div>
+              <div className="space-y-2">
+                <Label htmlFor="price" className="block text-sm">
+                  Product Price
+                </Label>
+                <Input
+                  id="price"
+                  type="number"
+                  {...register("price", { valueAsNumber: true })}
+                  placeholder="Price"
+                />
+                <p>{errors.price?.message}</p>
+              </div>
+            </div>
+          </div>
 
-      <input {...register("description")} placeholder="Description" />
-      <p>{errors.description?.message}</p>
+          <div className="mt-1 space-y-6">
+            <div>
+              <div className="space-y-2">
+                <Label htmlFor="discount" className=" block text-sm">
+                  Dicount Price(if applicable)
+                </Label>
+                <Input
+                  id="discount"
+                  type="number"
+                  {...register("discountPrice", { valueAsNumber: true })}
+                  placeholder="Discount"
+                />
+                <p>{errors.discountPrice?.message}</p>
+              </div>
+            </div>
+          </div>
 
-      {/* Required Arrays */}
-      <input
-        {...register("goal")}
-        placeholder="Goal item 1 (required at least 1)"
-      />
-      <p>{errors.goal?.message}</p>
+          <div className="mt-1 space-y-6">
+            <div>
+              <div className="space-y-2">
+                <Label htmlFor="discount" className=" block text-sm">
+                  Available Stock Quantity
+                </Label>
+                <Input
+                  type="number"
+                  {...register("stock", { valueAsNumber: true })}
+                  placeholder="Stock"
+                />
+                <p>{errors.stock?.message}</p>
+              </div>
+            </div>
+          </div>
 
-      <input {...register("ingredients")} placeholder="Ingredient item 1" />
-      <p>{errors.ingredients?.message}</p>
+          <div className="mt-1 space-y-6">
+            <div>
+              <div className="space-y-2">
+                <Label htmlFor="description" className=" block text-sm">
+                  Detailed Description
+                </Label>
+                <Textarea
+                  id="description"
+                  className="h-[200px]"
+                  {...register("description")}
+                  placeholder="Description"
+                />
+                <p>{errors.description?.message}</p>
+              </div>
+            </div>
+          </div>
 
-      <input {...register("allergens")} placeholder="Allergen item 1" />
-      <p>{errors.allergens?.message}</p>
+          {/* Required Arrays */}
+          <div className="mt-1 space-y-6">
+            <div>
+              <div className="space-y-2">
+                <Label htmlFor="goal" className=" block text-sm">
+                  Goal of Product
+                </Label>
+                <Input
+                  id="goal"
+                  {...register("goal")}
+                  placeholder="Goal item 1 (required at least 1)"
+                />
+                <p>{errors.goal?.message}</p>
+              </div>
+            </div>
+          </div>
 
-      <input {...register("directions")} placeholder="Directions" />
-      <p>{errors.directions?.message}</p>
+          <div className="mt-1 space-y-6">
+            <div>
+              <div className="space-y-2">
+                <Label htmlFor="ingredients" className=" block text-sm">
+                  Ingredients of Product
+                </Label>
+                <Input
+                  id="ingredients"
+                  {...register("ingredients")}
+                  placeholder="Ingredient item 1"
+                />
+                <p>{errors.ingredients?.message}</p>
+              </div>
+            </div>
+          </div>
 
-      <input
-        {...register("certifications")}
-        placeholder="Certification item 1"
-      />
-      <p>{errors.certifications?.message}</p>
+          <div className="mt-1 space-y-6">
+            <div>
+              <div className="space-y-2">
+                <Label htmlFor="allergens" className=" block text-sm">
+                  Allergens
+                </Label>
+                <Input
+                  id="allergens"
+                  {...register("allergens")}
+                  placeholder="Allergen item 1"
+                />
+                <p>{errors.allergens?.message}</p>
+              </div>
+            </div>
+          </div>
 
-      {/* Required Dates */}
-      <input type="date" {...register("expiryDate")} />
-      <p>{errors.expiryDate?.message}</p>
+          <div className="mt-1 space-y-6">
+            <div>
+              <div className="space-y-2">
+                <Label htmlFor="directions" className=" block text-sm">
+                  Directions(to use)
+                </Label>
+                <Input
+                  id="directions"
+                  {...register("directions")}
+                  placeholder="Directions"
+                />
+                <p>{errors.directions?.message}</p>
+              </div>
+            </div>
+          </div>
 
-      <input type="date" {...register("manufacturedDate")} />
-      <p>{errors.manufacturedDate?.message}</p>
+          <div className="mt-1 space-y-6">
+            <div>
+              <div className="space-y-2">
+                <Label htmlFor="certifications" className=" block text-sm">
+                  Certifications
+                </Label>
+                <Input
+                  id="certifications"
+                  {...register("certifications")}
+                  placeholder="Certification item 1"
+                />
+                <p>{errors.certifications?.message}</p>
+              </div>
+            </div>
+          </div>
 
-      {/* Selects */}
-      <select {...register("category")}>
-        {categories.map((c) => (
-          <option key={c} value={c}>
-            {c}
-          </option>
-        ))}
-      </select>
+          {/* Required Dates */}
+          <div className="mt-1 space-y-6">
+            <div>
+              <div className="space-y-2">
+                <Label htmlFor="expiryDate" className=" block text-sm">
+                  Expiry
+                </Label>
+                <Input
+                  id="expiryDate"
+                  type="date"
+                  {...register("expiryDate")}
+                />
+                <p>{errors.expiryDate?.message}</p>
+              </div>
+            </div>
+          </div>
 
-      <select {...register("form")}>
-        {form.map((f) => (
-          <option key={f} value={f}>
-            {f}
-          </option>
-        ))}
-      </select>
+          <div className="mt-1 space-y-6">
+            <div>
+              <div className="space-y-2">
+                <Label htmlFor="manufacturedDate" className=" block text-sm">
+                  Manufacturing Date
+                </Label>
+                <Input
+                  id="manufacturedDate"
+                  type="date"
+                  {...register("manufacturedDate")}
+                />
+                <p>{errors.manufacturedDate?.message}</p>
+              </div>
+            </div>
+          </div>
 
-      <button type="submit">Submit</button>
-    </form>
+          {/* Selects */}
+          <div className="mt-1 space-y-6">
+            <div>
+              <div className="space-y-2">
+                <Label className=" block text-sm">Select a category</Label>
+                <Select {...register("category")}>
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Select a Category" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectGroup>
+                      {categories.map((c, i) => (
+                        <SelectItem key={i} value={c}>
+                          {c}
+                        </SelectItem>
+                      ))}
+                    </SelectGroup>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+          </div>
+
+          <div className="mt-1 space-y-6">
+            <div>
+              <div className="space-y-2">
+                <Label className=" block text-sm">Select medicine form</Label>
+                <Select {...register("form")}>
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Select medicine form" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectGroup>
+                      {form.map((f, i) => (
+                        <SelectItem key={i} value={f}>
+                          {f}
+                        </SelectItem>
+                      ))}
+                    </SelectGroup>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+          </div>
+          {/* IMAGES SECTION */}
+          <div className="mt-1 space-y-6">
+            <div>
+              <div className="space-y-2">
+                <Label htmlFor="featureImage" className=" block text-sm">
+                  Select Product Featured Image
+                </Label>
+                <Input
+                  id="featureImage"
+                  type="file"
+                  accept="image/*"
+                  onChange={handleSelect}
+                />
+
+                <button
+                  disabled={!files}
+                  onClick={uploadAll}
+                  className="px-4 py-2 bg-black text-white rounded"
+                >
+                  Upload
+                </button>
+                <p>{errors.manufacturedDate?.message}</p>
+              </div>
+            </div>
+          </div>
+
+          <div className="mt-1 space-y-6">
+            <div>
+              <div className="space-y-2">
+                <Label htmlFor="galleryImage" className=" block text-sm">
+                  Select Product Featured Image
+                </Label>
+                <Input
+                  id="galleryImage"
+                  multiple
+                  type="file"
+                  accept="image/*"
+                  onChange={handleSelect}
+                />
+
+                <button
+                  disabled={!files}
+                  onClick={uploadAll}
+                  className="px-4 py-2 bg-black text-white rounded"
+                >
+                  Upload
+                </button>
+                <p>{errors.manufacturedDate?.message}</p>
+              </div>
+            </div>
+          </div>
+
+          <div className="flex justify-center">
+            <Button className="" type="submit">
+              Add Product
+            </Button>
+          </div>
+        </div>
+      </form>
+    </section>
   );
 }
