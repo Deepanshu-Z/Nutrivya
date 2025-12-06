@@ -41,14 +41,12 @@ export const authOptions: AuthOptions = {
           .from(schema.users)
           .where(eq(schema.users.email, user.email!));
         const role = response[0].role;
-
         token.role = role;
       }
       return token;
     },
 
     async session({ session, token }) {
-      console.log(session);
       //@ts-ignore
       session.user.role = token.role;
       return session;
