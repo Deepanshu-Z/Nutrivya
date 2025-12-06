@@ -4,6 +4,8 @@ import { DrizzleAdapter } from "@auth/drizzle-adapter";
 import db from "@/db/db";
 import EmailProvider from "next-auth/providers/email";
 import nodemailer from "nodemailer";
+import schema from "@/db/schema";
+import { eq } from "drizzle-orm";
 
 if (!process.env.GOOGLE_CLIENT_ID || !process.env.GOOGLE_CLIENT_SECRET) {
   throw new Error("Missing Google OAuth environment variables");
@@ -11,6 +13,9 @@ if (!process.env.GOOGLE_CLIENT_ID || !process.env.GOOGLE_CLIENT_SECRET) {
 
 export const authOptions: AuthOptions = {
   adapter: DrizzleAdapter(db),
+  session: {
+    strategy: "jwt",
+  },
   providers: [
     EmailProvider({
       server: {
@@ -26,19 +31,23 @@ export const authOptions: AuthOptions = {
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID!,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
-
-      profile(profile) {
-        return {
-          id: profile.sub,
-          name: profile.name,
-          email: profile.email,
-          image: profile.picture,
-          role: "user",
-        };
-      },
     }),
   ],
-
+  callbacks: {
+    async jwt({ token, user }) {
+      if (user) {
+        console.log("@@@@@@@@@@@@@@TOKEN: ", token);
+        console.log("@@@@@@@@@@@@@@USER: ", user);
+        const response = await db
+          .selectDistinct()
+          .from(schema.users)
+          .where(eq(schema.users.email, user.email!));
+        const role = response[0].role;
+        console.log("@@@@@@@@@@@@@@RESPONSE: ", role);
+      }
+      return token;
+    },
+  },
   secret: process.env.NEXTAUTH_SECRET,
 };
 
