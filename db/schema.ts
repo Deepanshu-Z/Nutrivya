@@ -108,6 +108,7 @@ export const products = pgTable("products", {
     .primaryKey()
     .$defaultFn(() => crypto.randomUUID()),
   name: varchar("name", { length: 255 }).notNull(),
+  title: text("title").notNull(),
   category: categoryEnum().default("Uncategorized").notNull(),
   description: text("description"),
 
@@ -140,9 +141,20 @@ export const ratings = pgTable("ratings", {
   id: text("id")
     .primaryKey()
     .$defaultFn(() => crypto.randomUUID()),
-  username: text("username").notNull(),
-  comments: jsonb("comments").$type<string[]>(),
-  images: jsonb("images").$type<string[]>(),
+
+  userId: text("userId")
+    .notNull()
+    .references(() => users.id),
+
+  productId: text("productId")
+    .notNull()
+    .references(() => products.id),
+
+  rating: integer("rating").notNull(), //1-5
+
+  comment: text("comment"),
+
+  createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
 export const cart = pgTable("cart", {

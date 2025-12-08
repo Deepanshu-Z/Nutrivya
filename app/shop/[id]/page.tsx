@@ -1,9 +1,10 @@
 import SingleProduct from "@/components/shopping/SingleProduct";
 
-export const page = () => {
+export const page = async ({ params }: { params: Promise<{ id: string }> }) => {
+  const { id } = await params;
   return (
     <div className="pt-20">
-      <SingleProduct />
+      <SingleProduct id={id} />
     </div>
   );
 };

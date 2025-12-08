@@ -19,6 +19,8 @@
     "@radix-ui/react-separator": "^1.1.8",
     "@radix-ui/react-slot": "^1.2.4",
     "@radix-ui/react-tabs": "^1.1.13",
+    "@tanstack/react-router": "^1.140.0",
+    "@tanstack/react-router-devtools": "^1.140.0",
     "axios": "^1.13.2",
     "class-variance-authority": "^0.7.1",
     "cloudinary": "^2.8.0",

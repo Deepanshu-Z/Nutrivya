@@ -56,7 +56,7 @@ export default function App() {
     } else console.log("Please try again");
   }
   useEffect(() => {
-    console.log("IMages are: ", imageUrl);
+    console.log("Images are: ", imageUrl);
   }, [imageUrl]);
   const uploadAll = async () => {
     if (!files) return alert("Undefined");

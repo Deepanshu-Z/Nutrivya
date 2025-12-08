@@ -23,7 +23,7 @@ export default function Products() {
         {/* @@@@@@@@@@@@@@@@@@@@@@@@@@@@@2-Product Grid @@@@@@@@@@@@@@@@@@@@@@@@@*/}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
           {/* PRODUCT 1 */}
-          <Link href={"/shop/1"}>
+          <Link href={"/shop/e3062893-3a19-4f23-b17a-f95919f8f461"}>
             <Card className="rounded-3xl border border-black/10 shadow-lg hover:shadow-xl transition-all hover:scale-[1.02] duration-300">
               <CardContent className="p-6 space-y-6">
                 <div className="overflow-hidden rounded-2xl">
