@@ -5,6 +5,7 @@ import { NextResponse } from "next/server";
 export async function POST(request: Request) {
   const {
     name,
+    title,
     category,
     description,
     price,
@@ -32,6 +33,7 @@ export async function POST(request: Request) {
       .insert(products)
       .values({
         name,
+        title,
         category,
         description,
         price,

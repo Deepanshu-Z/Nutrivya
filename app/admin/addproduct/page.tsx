@@ -37,6 +37,7 @@ export default function App() {
   const [files, setFiles] = useState<File[]>();
 
   const [imageUrl, setImageUrl] = useState<string[]>();
+  const [loading, setLoading] = useState<boolean>(false);
   const router = useRouter();
 
   const handleSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -45,6 +46,7 @@ export default function App() {
   };
 
   async function saveProduct(data: any) {
+    setLoading(true);
     console.log("@@@DATA", data);
     if (imageUrl) data.galleryImages = imageUrl;
     const response = await axios.post("/api/admin/addproduct  ", data);
@@ -52,16 +54,19 @@ export default function App() {
     if (response.data.success) {
       console.log("product added!");
       const id = response.data.id[0].id;
+      setLoading(false);
       router.replace(`/shop/${id}`);
     } else console.log("Please try again");
   }
   useEffect(() => {
     console.log("Images are: ", imageUrl);
+    setLoading(false);
   }, [imageUrl]);
   const uploadAll = async () => {
     if (!files) return alert("Undefined");
     if (files.length === 0) return alert("Select images first");
 
+    setLoading(true);
     // 1. Get signature
     const sigRes = await fetch("/api/admin/cloudinary");
     const { signature, timestamp } = await sigRes.json();
@@ -120,6 +125,18 @@ export default function App() {
                 </Label>
                 <Input {...register("name")} placeholder="Name" id="name" />
                 <p>{errors.name?.message}</p>
+              </div>
+            </div>
+          </div>
+
+          <div className="mt-6 space-y-6">
+            <div>
+              <div className="space-y-2">
+                <Label htmlFor="title" className="block text-sm">
+                  Product Tile
+                </Label>
+                <Input {...register("title")} placeholder="Title" id="title" />
+                <p>{errors.title?.message}</p>
               </div>
             </div>
           </div>
@@ -388,24 +405,34 @@ export default function App() {
                   accept="image/*"
                   onChange={handleSelect}
                 />
+                {loading ? (
+                  <Button className=" px-4 py-2 bg-black text-white rounded">
+                    Uploading..
+                  </Button>
+                ) : (
+                  <Button
+                    type="button"
+                    disabled={!files || loading}
+                    onClick={uploadAll}
+                    className="cursor-pointer px-4 py-2 bg-black text-white rounded"
+                  >
+                    Upload
+                  </Button>
+                )}
 
-                <button
-                  type="button"
-                  disabled={!files}
-                  onClick={uploadAll}
-                  className="cursor-pointer px-4 py-2 bg-black text-white rounded"
-                >
-                  Upload
-                </button>
                 <p>{errors.manufacturedDate?.message}</p>
               </div>
             </div>
           </div>
 
           <div className="flex justify-center">
-            <Button className="" type="submit">
-              Add Product
-            </Button>
+            {loading ? (
+              <Button>Adding..</Button>
+            ) : (
+              <Button disabled={loading} className="" type="submit">
+                Add Product
+              </Button>
+            )}
           </div>
         </div>
       </form>

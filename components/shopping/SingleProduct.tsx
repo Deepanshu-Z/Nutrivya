@@ -65,6 +65,7 @@ export default function SingleProduct({ id }: { id: string }) {
       </div>
     );
   }
+
   return (
     <div className="max-w-4xl mx-auto p-6">
       {/* PRODUCT IMAGES + INFO */}
@@ -122,9 +123,12 @@ export default function SingleProduct({ id }: { id: string }) {
           {/* DESCRIPTION */}
           <TabsContent value="description">
             <Card className="p-5">
-              <p className="text-muted-foreground leading-relaxed">
+              {/* <p className="text-muted-foreground leading-relaxed">
                 {product?.description}
-              </p>
+              </p> */}
+              <div
+                dangerouslySetInnerHTML={{ __html: product?.description! }}
+              />
             </Card>
           </TabsContent>
 
@@ -132,40 +136,75 @@ export default function SingleProduct({ id }: { id: string }) {
           <TabsContent value="specs">
             <Card className="p-5 space-y-2">
               <p>
-                <strong>Form:</strong> {product?.form}
+                <strong>Form:</strong>{" "}
+                <span>
+                  {" "}
+                  <Badge className="cursor-pointer" variant="outline">
+                    {product?.form}
+                  </Badge>
+                </span>
               </p>
               <p>
                 <strong>Goal:</strong>{" "}
                 {product?.goal.map((g) => (
-                  <span key={g}> {g}</span>
+                  <span>
+                    {" "}
+                    <Badge className="cursor-pointer" variant="outline">
+                      {g}
+                    </Badge>
+                  </span>
                 ))}
               </p>
               <p>
                 <strong>Ingredients:</strong>{" "}
                 {product?.ingredients.map((i) => (
-                  <span key={i}> {i} </span>
+                  <span>
+                    {" "}
+                    <Badge className="cursor-pointer" variant="outline">
+                      {i}
+                    </Badge>
+                  </span>
                 ))}
               </p>
               <p>
                 <strong>Allergens:</strong>
                 {product?.allergens.map((a) => (
-                  <span key={a}> {a} </span>
+                  <span>
+                    {" "}
+                    <Badge className="cursor-pointer" variant="outline">
+                      {a}
+                    </Badge>
+                  </span>
                 ))}
               </p>
               <p>
-                <strong>Directions:</strong> {product?.directions}
+                <strong>Directions:</strong>{" "}
+                <Badge className="cursor-pointer" variant="outline">
+                  {product?.directions}
+                </Badge>
               </p>
               <p>
                 <strong>Certifications:</strong>
                 {product?.certifications.map((c) => (
-                  <span key={c}> {c} </span>
+                  <span>
+                    {" "}
+                    <Badge className="cursor-pointer" variant="outline">
+                      {c}
+                    </Badge>
+                  </span>
                 ))}
               </p>
               <p>
-                <strong>Manufactured Date:</strong> {product?.manufacturedDate}
+                <strong>Manufactured Date:</strong>{" "}
+                <Badge className="cursor-pointer" variant="outline">
+                  {product?.manufacturedDate}
+                </Badge>
               </p>
               <p>
-                <strong>Expiry date:</strong> {product?.expiryDate}
+                <strong>Expiry date:</strong>{" "}
+                <Badge className="cursor-pointer" variant="outline">
+                  {product?.expiryDate}
+                </Badge>
               </p>
             </Card>
           </TabsContent>

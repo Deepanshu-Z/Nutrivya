@@ -11,12 +11,13 @@ export const categories = [
 export const form = ["powder", "capsule", "tablet", "liquid"] as const;
 
 export const productSchema = z.object({
-  name: z.string().min(1, "Name is required"),
+  name: z.string().min(4, "Name is required"),
+  title: z.string().min(10, "Title must be atleas 10 words"),
   price: z.number().min(0, "Price is required"),
 
   discountPrice: z.number().positive().optional(),
 
-  description: z.string().min(1, "Description is required"),
+  description: z.string().min(50, "Description is required"),
   stock: z.number().min(0, "Stock cannot be negative"),
 
   category: z.enum(categories).default("Uncategorized"),
