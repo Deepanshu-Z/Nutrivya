@@ -162,9 +162,7 @@ export const cart = pgTable("cart", {
     .$defaultFn(() => crypto.randomUUID())
     .primaryKey()
     .notNull(),
-  userId: text("userId")
-    .references(() => users.id)
-    .unique(),
+  userId: text("userId").references(() => users.id),
 });
 
 export const cartItems = pgTable("cartItems", {
@@ -183,4 +181,4 @@ export const cartItems = pgTable("cartItems", {
   quantity: integer("quantity").notNull().default(1),
 });
 
-export default { users, products };
+export default { users, products, cart, cartItems };

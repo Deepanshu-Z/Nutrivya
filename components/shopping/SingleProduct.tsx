@@ -14,6 +14,8 @@ import {
 import { useEffect, useState } from "react";
 import getproductdetails from "./actions/getproductdetals";
 import { string } from "zod";
+import addtocart from "./_components/addtocart";
+import AddToCart from "./_components/addtocart";
 export type Product = {
   id: string;
   name: string;
@@ -55,7 +57,7 @@ export default function SingleProduct({ id }: { id: string }) {
     }
     fetchProduct();
   }, []);
-
+  const handleCart = async () => {};
   if (loading) {
     return (
       <div className="p-10 space-y-4">
@@ -68,6 +70,7 @@ export default function SingleProduct({ id }: { id: string }) {
 
   return (
     <div className="max-w-4xl mx-auto p-6">
+      <AddToCart id={id} />
       {/* PRODUCT IMAGES + INFO */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
         {/* LEFT: PRODUCT IMAGE */}
@@ -103,7 +106,9 @@ export default function SingleProduct({ id }: { id: string }) {
           <Separator />
 
           <div className="space-y-3">
-            <Button className="w-full">Add to Cart</Button>
+            <Button className="w-full" onClick={handleCart}>
+              Add to Cart
+            </Button>
             <Button variant="outline" className="w-full">
               Buy Now
             </Button>
@@ -126,8 +131,14 @@ export default function SingleProduct({ id }: { id: string }) {
               {/* <p className="text-muted-foreground leading-relaxed">
                 {product?.description}
               </p> */}
-              <div
-                dangerouslySetInnerHTML={{ __html: product?.description! }}
+              <iframe
+                style={{
+                  width: "100%",
+                  height: "500px",
+                  border: "1px solid #ccc",
+                }}
+                srcDoc={product?.description} // ← this is the magic
+                sandbox=""
               />
             </Card>
           </TabsContent>
