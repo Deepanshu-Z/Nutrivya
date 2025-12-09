@@ -19,6 +19,12 @@ export const categoryEnum = pgEnum("categories", [
   "Skin",
   "Hygiene",
 ]);
+export const cartStatusEnum = pgEnum("cart_status", [
+  "active",
+  "completed",
+  "abandoned",
+]);
+
 export const users = pgTable("user", {
   id: text("id")
     .primaryKey()
@@ -163,6 +169,7 @@ export const cart = pgTable("cart", {
     .primaryKey()
     .notNull(),
   userId: text("userId").references(() => users.id),
+  status: cartStatusEnum("status").notNull().default("active"),
 });
 
 export const cartItems = pgTable("cartItems", {

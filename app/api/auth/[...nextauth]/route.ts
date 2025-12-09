@@ -41,7 +41,9 @@ export const authOptions: AuthOptions = {
           .from(schema.users)
           .where(eq(schema.users.email, user.email!));
         const role = response[0].role;
+        const id = response[0].id;
         token.role = role;
+        token.id = id;
       }
       return token;
     },
@@ -49,6 +51,8 @@ export const authOptions: AuthOptions = {
     async session({ session, token }) {
       //@ts-ignore
       session.user.role = token.role;
+      //@ts-ignore
+      session.user.id = token.id;
       return session;
     },
   },
