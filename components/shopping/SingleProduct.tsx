@@ -14,8 +14,8 @@ import {
 import { useEffect, useState } from "react";
 import getproductdetails from "./actions/getproductdetals";
 import { string } from "zod";
-import addtocart from "./_components/addtocart";
-import AddToCart from "./_components/addtocart";
+import AddToCart from "./_components/AddToCart";
+
 export type Product = {
   id: string;
   name: string;
@@ -70,7 +70,6 @@ export default function SingleProduct({ id }: { id: string }) {
 
   return (
     <div className="max-w-4xl mx-auto p-6">
-      <AddToCart id={id} />
       {/* PRODUCT IMAGES + INFO */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
         {/* LEFT: PRODUCT IMAGE */}
@@ -106,9 +105,8 @@ export default function SingleProduct({ id }: { id: string }) {
           <Separator />
 
           <div className="space-y-3">
-            <Button className="w-full" onClick={handleCart}>
-              Add to Cart
-            </Button>
+            <AddToCart id={id} />
+
             <Button variant="outline" className="w-full">
               Buy Now
             </Button>

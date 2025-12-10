@@ -3,17 +3,66 @@ import db from "@/db/db";
 import { cart, cartItems, users } from "@/db/schema";
 import { and, eq } from "drizzle-orm";
 import { useSession } from "next-auth/react";
-import action from "./action";
+import axios from "axios";
 
-export default function AddToCart(id: any) {
+const AddToCart = (id: any) => {
   const { data: session, status } = useSession();
 
+  async function handleCart() {
+    if (status === "authenticated") {
+      const response = await axios.post("/api/addtocart", {
+        session,
+        productId: id,
+      });
+      if (response.data.success) console.log("Ok");
+      else {
+        console.log(response.data.error);
+        console.log("Not ok");
+      }
+    }
+    // lookfor = LOCAL-STORAGE
+    else {
+      console.log(id.id);
+      const productId = id.id;
+      // Step 1: Get existing cart from localStorage
+      // If it doesn't exist, initialize an empty array
+      let localCart = JSON.parse(localStorage.getItem("cart") || "[]");
+
+      // localCart format:
+      // [
+      //   { productId: "xxx", quantity: 2 },
+      //   { productId: "yyy", quantity: 1 }
+      // ]
+
+      // Step 2: Check if the product already exists in the cart
+      const existingItemIndex = localCart.findIndex(
+        (item: any) => item.productId == productId
+      );
+
+      // Step 3: If product exists, update quantity
+      if (existingItemIndex !== -1) {
+        localCart[existingItemIndex].quantity += 1;
+      }
+
+      // Step 4: If product does not exist, insert new product
+      else {
+        console.log(existingItemIndex);
+        localCart.push({
+          productId: productId,
+          quantity: 1,
+        });
+      }
+
+      // Step 5: Save updated cart back to localStorage
+      localStorage.setItem("cart", JSON.stringify(localCart));
+    }
+  }
+
   return (
-    <Button
-      className="cursor-pointer"
-      onClick={() => action({ session, status, id })}
-    >
-      Add to Cart
+    <Button className="w-full cursor-pointer" onClick={handleCart}>
+      Add To Cart
     </Button>
   );
-}
+};
+
+export default AddToCart;
