@@ -4,7 +4,7 @@ import { and, eq } from "drizzle-orm";
 import { NextResponse } from "next/server";
 import { success } from "zod";
 
-export const POST = async (req: Request, res: Response) => {
+export async function POST(req: Request) {
   const body = await req.json();
   const { session, productId } = body;
   console.log("HI FROM SERVER", session, productId.id);
@@ -77,4 +77,4 @@ export const POST = async (req: Request, res: Response) => {
       success: false,
     });
   }
-};
+}
