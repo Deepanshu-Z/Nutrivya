@@ -3,14 +3,18 @@ import { ProductType } from "../page";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import RemoveProduct from "./RemoveProductModal";
+import { useSession } from "next-auth/react";
+import { useDebouncedCallback } from "use-debounce";
+import axios from "axios";
 type PropType = {
   products: ProductType[];
   setProducts: Dispatch<SetStateAction<ProductType[]>>;
 };
 export const CartItems = ({ products, setProducts }: PropType) => {
-  const [status, setStatus] = useState<boolean>(false);
+  const [coupon, setCoupon] = useState<boolean>(false);
   const [totalAmount, setTotalAmount] = useState(0);
   const [modal, setModal] = useState<boolean>(false);
+  const { data: session, status } = useSession();
   useEffect(() => {
     const total = products.reduce((sum, p) => {
       const price = p.discountPrice ?? p.price;
@@ -18,13 +22,31 @@ export const CartItems = ({ products, setProducts }: PropType) => {
     }, 0);
 
     setTotalAmount(total);
+    console.log("@@@@ITEMS", products);
   }, [products]);
 
+  const updateQuantity = async (
+    productId: number,
+    productQuantity: number,
+    cartItemId: string
+  ) => {
+    const response = await axios.put("/api/cart/updatequantity", {
+      cartItemId,
+      productId,
+      productQuantity,
+    });
+
+    if (response.data.success) console.log("Updated quantity in DB");
+    else console.log("Failed to update quantity");
+  };
+
+  const debouncedServer = useDebouncedCallback(updateQuantity, 1000);
   const decreaseQuantity = (productId: number) => {
     setProducts((prev) =>
       prev.map((p) => {
         if (p.productId !== productId) return p;
         if (p.quantity > 0) {
+          debouncedServer(p.productId, p.quantity - 1, p.cartItemId);
           return { ...p, quantity: p.quantity - 1 };
         }
         if (p.quantity == 0) setModal(true);
@@ -37,6 +59,7 @@ export const CartItems = ({ products, setProducts }: PropType) => {
     setProducts((prev) =>
       prev.map((p) => {
         if (p.productId !== productId) return p;
+        debouncedServer(p.productId, p.quantity + 1, p.cartItemId);
         return { ...p, quantity: p.quantity + 1 };
       })
     );
@@ -183,12 +206,12 @@ export const CartItems = ({ products, setProducts }: PropType) => {
                 <Button
                   type="button"
                   className="flex items-center justify-center font-medium tracking-wide bg-blue-600 hover:bg-blue-700 px-4 text-sm text-white cursor-pointer"
-                  onClick={(prev) => setStatus(true)}
+                  onClick={(prev) => setCoupon(true)}
                 >
                   Apply
                 </Button>
               </div>
-              {status && (
+              {coupon && (
                 <p className="text-red-500 font-bold">Coupon not valid</p>
               )}
             </div>

@@ -7,7 +7,6 @@ import { success } from "zod";
 export async function POST(req: Request) {
   const body = await req.json();
   const { session, productId } = body;
-  console.log("HI FROM SERVER", session, productId.id);
   try {
     //@ts-ignore
     const userId = session.user?.id;
