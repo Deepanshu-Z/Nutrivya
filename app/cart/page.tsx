@@ -3,7 +3,7 @@ import axios from "axios";
 import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import { CartItems } from "./components/CartItems";
-type ProductType = {
+export type ProductType = {
   cartItemId: string;
   discountPrice: number;
   image: string[];
@@ -14,7 +14,7 @@ type ProductType = {
 };
 const page = () => {
   const { data: session, status } = useSession();
-  const [products, setProducts] = useState<[]>();
+  const [products, setProducts] = useState<ProductType[]>([]);
   useEffect(() => {
     fetchCart();
   }, [status]);
@@ -34,9 +34,12 @@ const page = () => {
       console.log("looking for localstorage");
     }
   }
-  if (products?.length == 0) return <p>No cart found</p>;
+
+  if (!products || products.length === 0) {
+    return <p>No cart found</p>;
+  }
   return (
-    <CartItems />
+    <CartItems products={products} setProducts={setProducts} />
     // <div className="pt-40 bg-red-500 w-full">
     //   {products?.map((m: ProductType, i) => (
     //     <div key={i}>
