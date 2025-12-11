@@ -10,10 +10,19 @@ type PropType = {
   products: ProductType[];
   setProducts: Dispatch<SetStateAction<ProductType[]>>;
 };
+
+export type Details = {
+  cartItemId: string;
+  productId: number;
+};
 export const CartItems = ({ products, setProducts }: PropType) => {
   const [coupon, setCoupon] = useState<boolean>(false);
   const [totalAmount, setTotalAmount] = useState(0);
   const [modal, setModal] = useState<boolean>(false);
+  const [details, setDetails] = useState<Details>({
+    cartItemId: "",
+    productId: 0,
+  });
   const { data: session, status } = useSession();
   useEffect(() => {
     const total = products.reduce((sum, p) => {
@@ -49,6 +58,10 @@ export const CartItems = ({ products, setProducts }: PropType) => {
           const updated = p.quantity - 1;
           if (updated == 0) {
             setModal(true);
+            setDetails({
+              cartItemId: p.cartItemId,
+              productId: p.productId,
+            });
             return p;
           }
           debouncedServer(p.productId, updated, p.cartItemId);
@@ -69,10 +82,6 @@ export const CartItems = ({ products, setProducts }: PropType) => {
         return { ...p, quantity: p.quantity + 1 };
       })
     );
-  };
-
-  const removeProduct = async () => {
-    const response = await axios.delete("/api/cart/deletecart", {});
   };
 
   if (products.length === 0 && status != "loading")
@@ -119,7 +128,14 @@ export const CartItems = ({ products, setProducts }: PropType) => {
                       </h4>
 
                       <h6
-                        onClick={() => setModal(true)}
+                        onClick={() => {
+                          setModal(true);
+
+                          setDetails({
+                            cartItemId: p.cartItemId,
+                            productId: p.productId,
+                          });
+                        }}
                         className="text-xs font-medium text-red-500 cursor-pointer mt-1"
                       >
                         Remove
@@ -245,7 +261,14 @@ export const CartItems = ({ products, setProducts }: PropType) => {
             </div>
           </div>
         </div>
-        {modal && <RemoveProduct modal={modal} setModal={setModal} />}
+        {modal && (
+          <RemoveProduct
+            details={details}
+            setDetails={setDetails}
+            modal={modal}
+            setModal={setModal}
+          />
+        )}
       </div>
     </div>
   );

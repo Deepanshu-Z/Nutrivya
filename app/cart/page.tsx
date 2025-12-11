@@ -35,17 +35,7 @@ const page = () => {
     }
   }
 
-  return (
-    <CartItems products={products} setProducts={setProducts} />
-    // <div className="pt-40 bg-red-500 w-full">
-    //   {products?.map((m: ProductType, i) => (
-    //     <div key={i}>
-    //       <p>{m.cartItemId}</p>
-    //       <p>{m.cartItemId}</p>
-    //     </div>
-    //   ))}
-    // </div>
-  );
+  return <CartItems products={products} setProducts={setProducts} />;
 };
 
 export default page;

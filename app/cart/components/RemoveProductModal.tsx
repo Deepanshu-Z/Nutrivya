@@ -7,14 +7,32 @@ import {
   DialogPanel,
   DialogTitle,
 } from "@headlessui/react";
+import { Details } from "./CartItems";
+import axios from "axios";
 
 export type ModalType = {
   modal: boolean;
   setModal: Dispatch<SetStateAction<boolean>>;
+  details: Details;
+  setDetails: Dispatch<SetStateAction<Details>>;
 };
-export default function RemoveProduct({ modal, setModal }: ModalType) {
+export default function RemoveProduct({
+  modal,
+  setModal,
+  details,
+  setDetails,
+}: ModalType) {
   const handleClose = () => {
     setModal(false);
+  };
+
+  const removeProduct = async () => {
+    const response = await axios.delete("/api/cart/deletecart", {
+      data: {
+        cartItemId: details.cartItemId,
+        productId: details.productId,
+      },
+    });
   };
   return (
     <div>
@@ -53,7 +71,10 @@ export default function RemoveProduct({ modal, setModal }: ModalType) {
                 <div className="bg-gray-700/25 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
                   <button
                     type="button"
-                    onClick={() => setModal(false)}
+                    onClick={() => {
+                      setModal(false);
+                      removeProduct();
+                    }}
                     className="inline-flex w-full justify-center rounded-md bg-red-500 px-3 py-2 text-sm font-semibold text-white hover:bg-red-400 sm:ml-3 sm:w-auto"
                   >
                     Remove
@@ -61,7 +82,14 @@ export default function RemoveProduct({ modal, setModal }: ModalType) {
                   <button
                     type="button"
                     data-autofocus
-                    onClick={() => setModal(false)}
+                    onClick={() => {
+                      setModal(false);
+
+                      setDetails(() => ({
+                        cartItemId: "",
+                        productId: 0,
+                      }));
+                    }}
                     className="mt-3 inline-flex w-full justify-center rounded-md bg-white/10 px-3 py-2 text-sm font-semibold text-white inset-ring inset-ring-white/5 hover:bg-white/20 sm:mt-0 sm:w-auto"
                   >
                     Cancel
