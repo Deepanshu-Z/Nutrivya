@@ -33,6 +33,9 @@ export default function RemoveProduct({
         productId: details.productId,
       },
     });
+
+    if (response.data.success) console.log("DELETED SUCCESSFULLY");
+    else console.log("ERROR DELETING PRODUCTT");
   };
   return (
     <div>

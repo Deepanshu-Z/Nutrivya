@@ -6,6 +6,7 @@ import { success } from "zod";
 
 export async function DELETE(req: Request) {
   const { cartItemId, productId } = await req.json();
+  console.log(cartItemId, productId);
   try {
     const response = await db
       .delete(cartItems)
@@ -15,14 +16,7 @@ export async function DELETE(req: Request) {
           eq(cartItems.productId, productId)
         )
       );
-    const remaining = await db
-      .select()
-      .from(cartItems)
-      .where(eq(cartItems.cartId, cartItemId));
 
-    if (remaining.length === 0) {
-      await db.delete(cartItems).where(cartItems.id, cartItemId);
-    }
     return NextResponse.json({
       message: "Succesfully removed product from cart",
       success: true,
