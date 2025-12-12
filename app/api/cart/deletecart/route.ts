@@ -9,11 +9,21 @@ export async function DELETE(req: Request) {
   console.log(cartItemId, productId);
   try {
     const response = await db
+      .select()
+      .from(cartItems)
+      .where(
+        and(
+          eq(cartItems.id, String(cartItemId)),
+          eq(cartItems.productId, String(productId))
+        )
+      );
+    console.log(response);
+    await db
       .delete(cartItems)
       .where(
         and(
-          eq(cartItems.cartId, cartItemId),
-          eq(cartItems.productId, productId)
+          eq(cartItems.id, String(cartItemId)),
+          eq(cartItems.productId, String(productId))
         )
       );
 
