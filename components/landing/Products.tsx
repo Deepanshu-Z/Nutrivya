@@ -27,12 +27,12 @@ export default function Products() {
             <Card className="rounded-3xl border border-black/10 shadow-lg hover:shadow-xl transition-all hover:scale-[1.02] duration-300">
               <CardContent className="p-6 space-y-6">
                 <div className="overflow-hidden rounded-2xl">
-                  <Image
-                    src="/product1.jpg"
+                  <img
+                    src="/nutrivya.png"
                     alt="Product 1"
-                    width={600}
-                    height={500}
-                    className="w-full h-[360px] object-cover rounded-2xl"
+                    width={400}
+                    height={400}
+                    className="w-full h-[500px] object-cover rounded-2xl"
                   />
                 </div>
 
@@ -62,11 +62,11 @@ export default function Products() {
               <CardContent className="p-6 space-y-6">
                 <div className="overflow-hidden rounded-2xl">
                   <Image
-                    src="/product2.jpg"
+                    src="/nutrivya2.png"
                     alt="Product 2"
                     width={600}
                     height={500}
-                    className="w-full h-[360px] object-cover rounded-2xl"
+                    className="w-full h-[500px] object-cover rounded-2xl"
                   />
                 </div>
 

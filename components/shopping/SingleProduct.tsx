@@ -127,19 +127,20 @@ export default function SingleProduct({ id }: { id: string }) {
 
           {/* DESCRIPTION */}
           <TabsContent value="description">
-            <Card className="p-5">
-              {/* <p className="text-muted-foreground leading-relaxed">
-                {product?.description}
-              </p> */}
-              <iframe
-                style={{
-                  width: "100%",
-                  height: "500px",
-                  border: "1px solid #ccc",
-                }}
-                srcDoc={product?.description} // ← this is the magic
-                sandbox=""
-              />
+            <Card className="rounded-xl border bg-background shadow-sm">
+              <CardContent className="p-6 space-y-4">
+                <h3 className="text-lg font-semibold text-foreground">
+                  Product Description
+                </h3>
+
+                <div className="relative overflow-hidden rounded-lg border bg-muted">
+                  <iframe
+                    className="w-full h-[400px] bg-background"
+                    srcDoc={product?.description}
+                    sandbox="allow-same-origin allow-scripts"
+                  />
+                </div>
+              </CardContent>
             </Card>
           </TabsContent>
 
