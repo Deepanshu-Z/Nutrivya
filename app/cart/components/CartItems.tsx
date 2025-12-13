@@ -6,7 +6,9 @@ import RemoveProduct from "./RemoveProductModal";
 import { useSession } from "next-auth/react";
 import { useDebouncedCallback } from "use-debounce";
 import axios from "axios";
+import EmptyCartPage from "./EmptyCart";
 type PropType = {
+  loading: boolean;
   products: ProductType[];
   setProducts: Dispatch<SetStateAction<ProductType[]>>;
 };
@@ -15,7 +17,7 @@ export type Details = {
   cartItemId: string;
   productId: number;
 };
-export const CartItems = ({ products, setProducts }: PropType) => {
+export const CartItems = ({ loading, products, setProducts }: PropType) => {
   const [coupon, setCoupon] = useState<boolean>(false);
   const [totalAmount, setTotalAmount] = useState(0);
   const [modal, setModal] = useState<boolean>(false);
@@ -31,7 +33,6 @@ export const CartItems = ({ products, setProducts }: PropType) => {
     }, 0);
 
     setTotalAmount(total);
-    console.log("@@@@ITEMS", products);
   }, [products]);
 
   const updateQuantity = async (
@@ -84,15 +85,11 @@ export const CartItems = ({ products, setProducts }: PropType) => {
     );
   };
 
-  if (products.length === 0 && status != "loading")
-    return (
-      <div>
-        <p>No items found in cart</p>
-        <Button>Continue shopping</Button>
-      </div>
-    );
+  if (products.length === 0 && !loading) {
+    return <EmptyCartPage />;
+  }
 
-  if (products.length === 0 && status === "loading")
+  if (products.length === 0 && status != "loading")
     return (
       <div className="p-10 space-y-4">
         <div className="bg-gray-200 h-6 w-1/3 rounded animate-pulse"></div>
@@ -102,9 +99,9 @@ export const CartItems = ({ products, setProducts }: PropType) => {
     );
 
   return (
-    <div className="lg:max-w-5xl max-lg:max-w-2xl mx-auto bg-white ">
-      <div className="grid lg:grid-cols-3 gap-6">
-        <div className="lg:col-span-2 bg-gray-100 p-6 rounded-md">
+    <div className="lg:max-w-5xl max-lg:max-w-2xl mx-auto  ">
+      <div className="grid w-screen lg:grid-cols-3 gap-6">
+        <div className="lg:col-span-2    p-6 rounded-md">
           <h3 className="text-lg font-semibold text-slate-900">Your Cart</h3>
           <hr className="border-gray-300 mt-4 mb-8" />
 
@@ -112,7 +109,7 @@ export const CartItems = ({ products, setProducts }: PropType) => {
             const price = p.discountPrice ?? p.price;
 
             return (
-              <div key={i} className="sm:space-y-6 space-y-8">
+              <div key={i} className="bg-white sm:space-y-6 space-y-8">
                 <div className="grid sm:grid-cols-3 items-center gap-4">
                   <div className="sm:col-span-2 flex sm:items-center max-sm:flex-col gap-6">
                     <div className="w-40 h-40 shrink-0 bg-white p-2 rounded-md">
@@ -186,12 +183,13 @@ export const CartItems = ({ products, setProducts }: PropType) => {
                     </h4>
                   </div>
                 </div>
+                <br />
               </div>
             );
           })}
 
           {/* ORDER DETAILS */}
-          <div className="bg-gray-100 rounded-md p-6 md:sticky top-0 h-max">
+          <div className="bg-white rounded-md p-6 md:sticky top-0 h-max">
             <h3 className="text-lg font-semibold text-slate-900">
               Order details
             </h3>
@@ -263,6 +261,7 @@ export const CartItems = ({ products, setProducts }: PropType) => {
         </div>
         {modal && (
           <RemoveProduct
+            setProducts={setProducts}
             details={details}
             setDetails={setDetails}
             modal={modal}

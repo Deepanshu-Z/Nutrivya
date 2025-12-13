@@ -9,14 +9,17 @@ import {
 } from "@headlessui/react";
 import { Details } from "./CartItems";
 import axios from "axios";
+import { ProductType } from "../page";
 
 export type ModalType = {
   modal: boolean;
   setModal: Dispatch<SetStateAction<boolean>>;
   details: Details;
   setDetails: Dispatch<SetStateAction<Details>>;
+  setProducts: Dispatch<SetStateAction<ProductType[]>>;
 };
 export default function RemoveProduct({
+  setProducts,
   modal,
   setModal,
   details,
@@ -27,6 +30,9 @@ export default function RemoveProduct({
   };
 
   const removeProduct = async () => {
+    setProducts((prev) =>
+      prev.filter((p) => p.productId !== details.productId)
+    );
     const response = await axios.delete("/api/cart/deletecart", {
       data: {
         cartItemId: details.cartItemId,

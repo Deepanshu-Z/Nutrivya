@@ -57,7 +57,7 @@ export default function Products() {
           </Link>
 
           {/*@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ PRODUCT 2@@@@@@@@@@@@@@@@@@@@@@ */}
-          <Link href={"/shop/1"}>
+          <Link href={"/shop/68e39681-6b43-4c49-9a30-a242a7bf5e7e"}>
             <Card className="rounded-3xl border border-black/10 shadow-lg hover:shadow-xl transition-all hover:scale-[1.02] duration-300">
               <CardContent className="p-6 space-y-6">
                 <div className="overflow-hidden rounded-2xl">

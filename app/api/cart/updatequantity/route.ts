@@ -4,7 +4,7 @@ import { and, eq } from "drizzle-orm";
 import { NextResponse } from "next/server";
 import { success } from "zod";
 
-export async function PUT(req: Request, res: Response) {
+export async function PUT(req: Request) {
   const { productId, productQuantity, cartItemId } = await req.json();
   try {
     const response = await db
