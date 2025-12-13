@@ -76,7 +76,9 @@ const Features = ({
             </h2>
           </div>
         )}
-        <Integrations />
+        <img src="/ingredients.png" alt="ingredients image" />
+
+        {/* <Integrations /> */}
 
         <div className="pl-15 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
           {features.map((feature, i) => (
