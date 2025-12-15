@@ -67,8 +67,8 @@ const Features = ({
   buttonUrl = "https://shadcnblocks.com",
 }: Feature43Props) => {
   return (
-    <section className="py-32">
-      <div className="container">
+    <section className="pt-20 w-full pb-2">
+      <div className="w-full">
         {title && (
           <div className="mx-auto mb-16 max-w-3xl text-center">
             <h2 className="text-pretty text-4xl font-medium lg:text-5xl">
@@ -76,7 +76,11 @@ const Features = ({
             </h2>
           </div>
         )}
-        <img src="/ingredients.png" alt="ingredients image" />
+        <img
+          className="w-full"
+          src="/ingredients.png"
+          alt="ingredients image"
+        />
 
         {/* <Integrations /> */}
 
