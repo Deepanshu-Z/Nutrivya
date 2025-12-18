@@ -89,7 +89,10 @@ export default function UserProfile() {
               ) : (
                 <div className="flex gap-2 items-center">
                   No contact found:
-                  <PopoverDemo />
+                  <PopoverDemo
+                    //@ts-ignore
+                    id={session?.user.id}
+                  />
                 </div>
               )}
             </p>

@@ -9,7 +9,7 @@ import {
 import axios from "axios";
 import { useState } from "react";
 
-export function PopoverDemo() {
+export function PopoverDemo(id: any) {
   const [phone, setPhone] = useState<string>("");
   const [error, setError] = useState<string>("");
 
@@ -18,9 +18,11 @@ export function PopoverDemo() {
       setError("");
       const response = await axios.put("/api/userprofile/savephone", {
         phone,
+        id,
       });
 
       if (response.data.success) {
+        location.reload();
       }
     } else {
       setError("Phone number must be valid (10 digits)");
