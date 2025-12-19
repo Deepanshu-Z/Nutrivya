@@ -49,7 +49,7 @@ export default function UserProfile() {
   const addContact = () => {};
   if (loading) return <SkeletonCard />;
   return (
-    <div className="w-full h-full p-6">
+    <div className="w-full h-[90%] p-6">
       <Card className="w-full h-full">
         <CardHeader className="flex flex-row items-center gap-4">
           <Avatar className="h-16 w-16">

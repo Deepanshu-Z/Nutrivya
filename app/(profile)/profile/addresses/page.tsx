@@ -1,13 +1,16 @@
 "use client";
+
 import axios from "axios";
 import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
+
 import SkeletonCard from "../components/Skeleton";
-import { Button } from "@/components/ui/button";
 import { DialogDemo } from "../components/Dialog";
+
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { MapPin, Phone } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { MapPin, Phone } from "lucide-react";
+
 export type Address = {
   phoneNumber: string;
   houseNumber: string;
@@ -18,88 +21,97 @@ export type Address = {
   nearby: string;
   isDefault: boolean;
 };
-export default function Address() {
+
+export default function AddressPage() {
   const { data: session, status } = useSession();
   const [address, setAddress] = useState<Address[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
+  const [loading, setLoading] = useState(true);
 
-  //@ts-ignore
-  const userid = session?.user.id;
-  async function fetchAddress() {
+  const userId = (session?.user as any)?.id;
+
+  const fetchAddress = async () => {
     setLoading(true);
-    const response = await axios.get(`/api/userprofile/fetchaddress/`);
-    console.log("Addresses are: ", response.data.response);
-    setAddress(response.data.response);
+    const res = await axios.get("/api/userprofile/fetchaddress");
+    setAddress(res.data.response ?? []);
     setLoading(false);
-  }
+  };
+
   useEffect(() => {
     if (status === "authenticated") fetchAddress();
   }, [status]);
 
+  /* -------------------- LOADING -------------------- */
   if (loading) return <SkeletonCard />;
+
+  /* -------------------- EMPTY STATE -------------------- */
   if (!loading && address.length === 0) {
     return (
-      <div className=" h-full w-full gap-10 flex flex-col justify-center items-center">
-        <h2 className="text-5xl">No address found</h2>
+      <div className="min-h-screen flex flex-col items-center justify-center gap-6">
+        <h2 className="text-3xl font-semibold text-muted-foreground">
+          No addresses saved
+        </h2>
 
-        <DialogDemo
-          //@ts-ignore
-          id={session?.user.id}
-          address={address}
-          setAddress={setAddress}
-        />
+        <DialogDemo id={userId} address={address} setAddress={setAddress} />
       </div>
     );
   }
-  if (address.length >= 1)
-    return (
-      <div className="h-screen w-screen">
-        {address.map((address) => (
-          <Card className="m-10 max-w-md rounded-xl border shadow-sm">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-lg font-semibold flex items-center gap-2">
-                <MapPin className="h-5 w-5 text-muted-foreground" />
-                Delivery Address
-              </CardTitle>
-            </CardHeader>
 
-            <CardContent className="space-y-4">
-              {/* Address */}
-              <div className="text-sm leading-relaxed text-foreground">
-                <p className="font-medium">House No: {address.houseNumber}</p>
-                <p>{address.area}</p>
-                <p>
-                  {address.city}, {address.state} – {address.pincode}
-                </p>
-                {address.nearby && (
-                  <p className="text-muted-foreground">Near {address.nearby}</p>
-                )}
-              </div>
+  /* -------------------- MAIN UI -------------------- */
+  return (
+    <div className="min-h-[90%] w-full bg-muted/30 py-10">
+      <div className="mx-auto max-w-5xl px-6 space-y-8">
+        {/* Header */}
+        <div className="flex items-center justify-between">
+          <h1 className="text-2xl font-semibold">Saved Addresses</h1>
 
-              {/* Divider */}
-              <div className="h-px bg-border" />
+          <DialogDemo id={userId} address={address} setAddress={setAddress} />
+        </div>
 
-              {/* Phone */}
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2 text-sm">
-                  <Phone className="h-4 w-4 text-muted-foreground" />
-                  <span>{address.phoneNumber}</span>
+        {/* Address Grid */}
+        <div className="grid gap-6 sm:grid-cols-2">
+          {address.map((addr, idx) => (
+            <Card
+              key={idx}
+              className="rounded-xl border bg-background shadow-sm hover:shadow-md transition"
+            >
+              <CardHeader className="pb-3">
+                <CardTitle className="text-base font-semibold flex items-center gap-2">
+                  <MapPin className="h-4 w-4 text-muted-foreground" />
+                  Delivery Address
+                </CardTitle>
+              </CardHeader>
+
+              <CardContent className="space-y-4 text-sm">
+                {/* Address Info */}
+                <div className="leading-relaxed">
+                  <p className="font-medium">House No: {addr.houseNumber}</p>
+                  <p>{addr.area}</p>
+                  <p>
+                    {addr.city}, {addr.state} – {addr.pincode}
+                  </p>
+                  {addr.nearby && (
+                    <p className="text-muted-foreground">Near {addr.nearby}</p>
+                  )}
                 </div>
-                <Badge className="cursor-pointer" variant="secondary">
-                  to be updated soon (edit or delete)
-                </Badge>
-              </div>
-            </CardContent>
-          </Card>
-        ))}
-        <div className="m-10 cursor-pointer">
-          <DialogDemo
-            //@ts-ignore
-            id={session?.user.id}
-            setAddress={setAddress}
-            address={address}
-          />
+
+                <div className="h-px bg-border" />
+
+                {/* Footer */}
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Phone className="h-4 w-4 text-muted-foreground" />
+                    <span>{addr.phoneNumber}</span>
+                  </div>
+
+                  <Badge variant="secondary">
+                    {addr.isDefault ? "Default" : "Saved"}
+                  </Badge>
+                </div>
+              </CardContent>
+            </Card>
+          ))}
         </div>
       </div>
-    );
+    </div>
+  );
 }

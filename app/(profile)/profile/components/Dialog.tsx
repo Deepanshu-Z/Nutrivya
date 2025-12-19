@@ -76,8 +76,7 @@ type Props = {
 export function DialogDemo({ id, setAddress, address }: Props) {
   const [loading, setLoading] = React.useState<boolean>(false);
   const [errors, setErrors] = React.useState<Record<string, string>>({});
-
-  const router = useRouter();
+  const [open, setOpen] = React.useState(false);
 
   const saveAdd = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -129,12 +128,14 @@ export function DialogDemo({ id, setAddress, address }: Props) {
             isDefault: true,
           },
         ]);
+        setOpen(false);
+        setLoading(false);
       } else console.log("error", response.data.error);
     }
   };
 
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button className="cursor-pointer" variant="default">
           Add Address
