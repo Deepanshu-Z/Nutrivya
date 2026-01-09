@@ -8,7 +8,8 @@ export const GET = async (req: Request) => {
   try {
     const session = await getServerSession(authOptions);
     const userEmail = session?.user?.email;
-
+    //@ts-ignore
+    const role = session?.user.role;
     if (!userEmail) {
       return Response.json(
         { success: false, msg: "Unauthenticated" },
@@ -26,10 +27,18 @@ export const GET = async (req: Request) => {
       );
     }
 
-    const response = await db
-      .select()
-      .from(chats)
-      .where(and(eq(chats.userEmail, userEmail), eq(chats.ticketId, ticketId)));
+    const response =
+      role == "admin"
+        ? await db
+            .select()
+            .from(chats)
+            .where(and(eq(chats.ticketId, ticketId)))
+        : await db
+            .select()
+            .from(chats)
+            .where(
+              and(eq(chats.userEmail, userEmail), eq(chats.ticketId, ticketId))
+            );
 
     return Response.json({
       success: true,

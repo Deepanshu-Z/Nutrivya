@@ -27,7 +27,6 @@ export default function Page() {
     const { data } = await axios.get(
       `/api/userprofile/chats?ticketId=${ticketId}`
     );
-    console.log(data.chats);
     setChats(data.chats);
   };
 
@@ -53,6 +52,7 @@ export default function Page() {
       ticketId,
       userEmail,
       content,
+      role: "user",
     });
     setBtnLoading(false);
     setContent("");

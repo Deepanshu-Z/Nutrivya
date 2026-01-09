@@ -12,6 +12,7 @@ import { Badge } from "@/components/ui/badge";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import Link from "next/link";
+import { Skeleton } from "@/components/ui/skeleton";
 
 type Tickets = {
   id: string;
@@ -23,15 +24,21 @@ type Tickets = {
 
 export default function TicketsTable() {
   const [tickets, setTickets] = useState<Tickets>([]);
+  const [loading, setLoading] = useState<boolean>(true);
 
   const fetchAllTickets = async () => {
+    setLoading(true);
     const data = await axios.get("/api/admin/tickets/fetchtickets");
     console.log(data.data.result);
     setTickets(data.data.result);
+    setLoading(false);
   };
+
   useEffect(() => {
     fetchAllTickets();
   }, []);
+
+  if (loading) return <Skeleton />;
   return (
     <Table>
       <TableHeader>

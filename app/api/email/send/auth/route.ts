@@ -1,19 +1,23 @@
 import { Resend } from "resend";
 import { render } from "@react-email/render";
 import EmailTemplate from "@/components/mail/email-template";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import db from "@/db/db";
 import { chats } from "@/db/schema";
+import { getToken } from "next-auth/jwt";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
-export async function POST(req: Request) {
+export async function POST(req: NextRequest) {
+  const token = await getToken({ req });
+  console.log(token);
   const values = await req.json();
 
-  const userEmail = values.userEmail;
-  // const subject = values.subject;
   const content = values.content;
   const ticketId = values.ticketId;
+  const role = values.role;
+  const userEmail =
+    role == "user" ? "deepanshupokhriyal07@gmail.com" : values.userEmail;
 
   if (!userEmail) return Response.json("Unauthenticated", { status: 400 });
 
@@ -40,8 +44,9 @@ export async function POST(req: Request) {
     const response = await db.insert(chats).values({
       id: mailId,
       ticketId: ticketId,
-      userEmail: userEmail,
+      userEmail: values.userEmail,
       content: content,
+      role: role,
     });
 
     return NextResponse.json({
