@@ -162,6 +162,41 @@
       "when": 1766404717170,
       "tag": "0022_tan_punisher",
       "breakpoints": true
+    },
+    {
+      "idx": 23,
+      "version": "7",
+      "when": 1768037753282,
+      "tag": "0023_glorious_havok",
+      "breakpoints": true
+    },
+    {
+      "idx": 24,
+      "version": "7",
+      "when": 1768040355871,
+      "tag": "0024_skinny_ultimatum",
+      "breakpoints": true
+    },
+    {
+      "idx": 25,
+      "version": "7",
+      "when": 1768041579765,
+      "tag": "0025_useful_selene",
+      "breakpoints": true
+    },
+    {
+      "idx": 26,
+      "version": "7",
+      "when": 1768041668613,
+      "tag": "0026_lying_warbound",
+      "breakpoints": true
+    },
+    {
+      "idx": 27,
+      "version": "7",
+      "when": 1768041888420,
+      "tag": "0027_overrated_robin_chapel",
+      "breakpoints": true
     }
   ]
 }

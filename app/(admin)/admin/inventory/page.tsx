@@ -12,8 +12,42 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+export type ProductType = {
+  id: string;
+
+  name: string;
+  title: string;
+  category:
+    | "Uncategorized"
+    | "Health & Fitness"
+    | "Suppliments"
+    | "Skin"
+    | "Hygiene";
+  medicineType: "powder" | "capsule" | "tablet" | "liquid";
+  form: string;
+
+  description: string;
+  directions: string;
+  warnings: string | null;
+
+  price: number;
+  discountPrice: number;
+
+  inStock: number;
+
+  allergens: string[];
+  ingredients: string[];
+  certifications: string[];
+  goal: string[];
+
+  galleryImages: string[];
+
+  manufacturedDate: string; // ISO
+  expiryDate: string; // ISO
+  createdAt: string; // ISO
+};
 const page = () => {
-  const [products, setProducts] = useState([]);
+  const [products, setProducts] = useState<ProductType[]>([]);
   const fetchAllProducts = async () => {
     const response = await axios.get("/api/admin/getallproducts");
     console.log(response.data.response);

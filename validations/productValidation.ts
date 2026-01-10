@@ -23,7 +23,7 @@ export const productSchema = z.object({
   category: z.enum(categories).default("Uncategorized"),
   form: z.enum(form).default("capsule"),
 
-  inStock: z.boolean().default(true),
+  inStock: z.number().default(1),
 
   galleryImages: z
     .string()

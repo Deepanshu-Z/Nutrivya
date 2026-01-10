@@ -22,6 +22,12 @@ export const categoryEnum = pgEnum("categories", [
   "Skin",
   "Hygiene",
 ]);
+export const medicineType = pgEnum("medicineType", [
+  "powder",
+  "capsule",
+  "tablet",
+  "liquid",
+]);
 export const cartStatusEnum = pgEnum("cart_status", [
   "active",
   "completed",
@@ -172,7 +178,7 @@ export const products = pgTable("products", {
   price: integer("price").notNull(),
   discountPrice: integer("discount_price"),
 
-  inStock: boolean("in_stock").notNull().default(true),
+  inStock: integer("in_stock"),
 
   // featureImage: jsonb("featureImage").$type<string[]>().default([]),
   galleryImages: jsonb("galleryImages").$type<string[]>().default([]),
@@ -190,7 +196,7 @@ export const products = pgTable("products", {
 
   expiryDate: timestamp("expiry_date", { mode: "date" }),
   manufacturedDate: timestamp("manufactured_date", { mode: "date" }),
-
+  medicineType: medicineType("medicine_type").default("capsule"),
   createdAt: timestamp("created_at").defaultNow(),
 });
 
