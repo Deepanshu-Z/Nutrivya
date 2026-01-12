@@ -29,6 +29,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { RemoveFormatting, RemoveFormattingIcon } from "lucide-react";
 export default function Page() {
   const [product, setProduct] = useState<ProductType | null>(null);
 
@@ -64,6 +65,7 @@ export default function Page() {
   async function saveProduct(data: any) {
     // setLoading(true);
     console.log("@@@DATA", data);
+    console.log("IMAGES DATA: ", product?.galleryImages);
     // if (imageUrl) data.galleryImages = imageUrl;
     // const response = await axios.post("/api/admin/addproduct  ", data);
     // console.log(response.data);
@@ -148,6 +150,18 @@ export default function Page() {
       uploadedUrls.push(data.secure_url);
     }
     setImageUrl((prev) => [...(prev ?? []), ...uploadedUrls]);
+  };
+
+  const removeProductImage = async (url: string) => {
+    console.log(url);
+    const response = await axios.patch(`/api/admin/images/delete/${id}`, {
+      data: { url },
+    });
+
+    if (response.data.success) console.log("successfully deleted");
+    else {
+      console.log(response.data.error);
+    }
   };
   if (!product) return <SkeletonCard />;
 
@@ -449,6 +463,29 @@ export default function Page() {
                   )}
 
                   <p>{errors.manufacturedDate?.message}</p>
+                  {product.galleryImages.map((image) => (
+                    <div key={image} className="relative inline-block">
+                      <img
+                        src={image}
+                        height={200}
+                        width={200}
+                        alt=""
+                        className="rounded border"
+                      />
+
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        className="absolute top-1 right-1"
+                        onClick={() => removeProductImage(image)}
+                      >
+                        Remove
+                      </Button>
+                    </div>
+                  ))}
+
+                  {/* <img src={product.galleryImages} height={200} width={200} /> */}
                 </div>
               </div>
             </div>

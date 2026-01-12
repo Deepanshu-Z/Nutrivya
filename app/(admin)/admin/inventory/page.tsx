@@ -40,7 +40,7 @@ export type ProductType = {
   certifications: string;
   goal: string;
 
-  galleryImages: string;
+  galleryImages: string[];
 
   manufacturedDate: string; // ISO
   expiryDate: string; // ISO
