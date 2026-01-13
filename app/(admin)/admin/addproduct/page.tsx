@@ -60,7 +60,6 @@ export default function App() {
   }
 
   useEffect(() => {
-    console.log("Images are: ", imageUrl);
     setLoading(false);
   }, [imageUrl]);
   const uploadAll = async () => {
@@ -97,6 +96,10 @@ export default function App() {
       uploadedUrls.push(data.secure_url);
     }
     setImageUrl((prev) => [...(prev ?? []), ...uploadedUrls]);
+  };
+
+  const removeProductImage = async (url: string) => {
+    setImageUrl((prev) => prev?.filter((e) => e != url));
   };
 
   return (
@@ -367,31 +370,6 @@ export default function App() {
               </div>
             </div>
           </div>
-          {/* IMAGES SECTION */}
-          {/* <div className="mt-1 space-y-6">
-              <div>
-                <div className="space-y-2">
-                  <Label htmlFor="featureImage" className=" block text-sm">
-                    Select Product Featured Image
-                  </Label>
-                  <Input
-                    id="featureImage"
-                    type="file"
-                    accept="image/*"
-                    onChange={handleSelect}
-                  />
-
-                  <button
-                    disabled={!files}
-                    onClick={uploadAll}
-                    className="px-4 py-2 bg-black text-white rounded"
-                  >
-                    Upload
-                  </button>
-                  <p>{errors.manufacturedDate?.message}</p>
-                </div>
-              </div>
-            </div> */}
 
           <div className="mt-1 space-y-6">
             <div>
@@ -407,32 +385,58 @@ export default function App() {
                   onChange={handleSelect}
                 />
                 {loading ? (
-                  <Button className=" px-4 py-2 bg-black text-white rounded">
+                  <button className=" px-4 py-2 bg-black text-white rounded">
                     Uploading..
-                  </Button>
+                  </button>
                 ) : (
-                  <Button
+                  <button
                     type="button"
                     disabled={!files || loading}
                     onClick={uploadAll}
                     className="cursor-pointer px-4 py-2 bg-black text-white rounded"
                   >
                     Upload
-                  </Button>
+                  </button>
                 )}
 
                 <p>{errors.manufacturedDate?.message}</p>
+
+                {imageUrl?.map((image, index) => (
+                  <div key={index} className="relative inline-block">
+                    <div>
+                      <img
+                        src={image}
+                        height={200}
+                        width={200}
+                        alt=""
+                        className="rounded border"
+                      />
+
+                      <Button
+                        variant={"ghost"}
+                        className="absolute top-1 right-1"
+                        onClick={() => removeProductImage(image)}
+                      >
+                        Remove
+                      </Button>
+                    </div>
+                  </div>
+                ))}
               </div>
             </div>
           </div>
 
           <div className="flex justify-center">
             {loading ? (
-              <Button>Adding..</Button>
+              <button>Adding..</button>
             ) : (
-              <Button disabled={loading} className="" type="submit">
+              <button
+                disabled={loading}
+                className="cursor-pointer px-4 py-2 bg-black text-white rounded"
+                type="submit"
+              >
                 Add Product
-              </Button>
+              </button>
             )}
           </div>
         </div>
