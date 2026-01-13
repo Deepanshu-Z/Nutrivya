@@ -58,16 +58,14 @@ export default function Page() {
 
   async function updateProduct(data: any) {
     setLoading(true);
-    console.log("@@@DATA", data);
     if (imageUrl) data.galleryImages = imageUrl;
-    const response = await axios.post("/api/admin/addproduct  ", data);
+    const response = await axios.put(`/api/admin/updateproduct/${id}`, data);
     console.log(response.data);
     if (response.data.success) {
-      console.log("product added!");
-      const id = response.data.id[0].id;
+      const id = response.data.update[0].id;
       setLoading(false);
       router.replace(`/shop/${id}`);
-    } else console.log("Please try again");
+    } else console.log(response.data.error);
     setLoading(false);
   }
 

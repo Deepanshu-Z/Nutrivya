@@ -18,7 +18,6 @@ export async function PATCH(
       })
       .where(eq(products.id, id));
 
-    console.log("RESULTS ARE: ", result);
     return NextResponse.json({ success: true });
   } catch (error) {
     return NextResponse.json({ error, success: false });
