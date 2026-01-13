@@ -4,7 +4,7 @@ import { eq } from "drizzle-orm";
 
 export const PUT = async (
   req: Request,
-  { params }: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) => {
   const {
     name,
@@ -29,7 +29,7 @@ export const PUT = async (
   } = await req.json();
   const newExpiryDate = new Date(expiryDate);
   const newManufacturedDate = new Date(manufacturedDate);
-  const { id } = await params;
+  const { id } = await context.params;
   try {
     const update = await db
       .update(products)
