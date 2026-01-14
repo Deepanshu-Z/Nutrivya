@@ -49,7 +49,7 @@ export default function Categories() {
         {/* GRID */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8">
           {categories.map((item, idx) => (
-            <Link href={item.link}>
+            <Link key={idx} href={item.link}>
               <Card
                 key={idx}
                 className="rounded-2xl border hover:shadow-xl transition-all hover:scale-[1.02] cursor-pointer"

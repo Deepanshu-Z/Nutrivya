@@ -3,16 +3,15 @@ import { render } from "@react-email/render";
 import EmailTemplate from "@/components/mail/email-template";
 import { NextRequest, NextResponse } from "next/server";
 import db from "@/db/db";
-import { chats } from "@/db/schema";
+import { chats, ticket } from "@/db/schema";
 import { getToken } from "next-auth/jwt";
+import { eq } from "drizzle-orm";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
 export async function POST(req: NextRequest) {
   const token = await getToken({ req });
-  console.log(token);
   const values = await req.json();
-  console.log(values);
   const content = values.content;
   const ticketId = values.ticketId;
   const role = values.role;
@@ -37,6 +36,7 @@ export async function POST(req: NextRequest) {
     });
 
     if (error) {
+      console.log("@@@@@@@@@@@@ERROR", error);
       return Response.json({ error }, { status: 500 });
     }
     const mailId = data.id;
@@ -48,6 +48,11 @@ export async function POST(req: NextRequest) {
       content: content,
       role: role,
     });
+
+    const update = await db
+      .update(ticket)
+      .set({ status: "pending" })
+      .where(eq(ticket.id, ticketId));
 
     return NextResponse.json({
       message: "Successfully sent",

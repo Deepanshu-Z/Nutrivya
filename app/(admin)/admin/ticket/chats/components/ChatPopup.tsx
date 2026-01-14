@@ -1,3 +1,4 @@
+"use client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -8,16 +9,19 @@ import {
 } from "@/components/ui/popover";
 import { updateCategories } from "../../action/updateticket";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 type ChatPopupProps = {
   ticketId: string;
 };
 function ChatPopup({ ticketId }: ChatPopupProps) {
-  const [open, setOpen] = useState(true);
-
+  const [open, setOpen] = useState(false);
+  const router = useRouter();
   return (
     <Popover open={open}>
       <PopoverTrigger asChild>
-        <Button variant="outline">Mark as Completed</Button>
+        <Button variant="outline" onClick={() => setOpen(true)}>
+          Mark as Completed
+        </Button>
       </PopoverTrigger>
       <PopoverContent className="w-80">
         <div className="grid gap-4">
@@ -35,6 +39,7 @@ function ChatPopup({ ticketId }: ChatPopupProps) {
               onClick={() => {
                 setOpen(false);
                 updateCategories(`${ticketId}`, "completed");
+                router.push("/admin/ticket");
               }}
             >
               Yes
