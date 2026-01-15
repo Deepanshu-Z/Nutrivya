@@ -57,7 +57,6 @@ export default function SingleProduct({ id }: { id: string }) {
     async function fetchProduct() {
       setLoading(true);
       const response = await getproductdetails(id);
-      console.log(response);
       setProduct(response);
       setSelectedImage(response.galleryImages[0]);
       setLoading(false);
@@ -182,8 +181,8 @@ export default function SingleProduct({ id }: { id: string }) {
               </p>
               <p>
                 <strong>Goal:</strong>{" "}
-                {product?.goal.map((g) => (
-                  <span>
+                {product?.goal.map((g, i) => (
+                  <span key={i}>
                     {" "}
                     <Badge className="cursor-pointer" variant="outline">
                       {g}
@@ -193,8 +192,8 @@ export default function SingleProduct({ id }: { id: string }) {
               </p>
               <p>
                 <strong>Ingredients:</strong>{" "}
-                {product?.ingredients.map((i) => (
-                  <span>
+                {product?.ingredients.map((i, index) => (
+                  <span key={index}>
                     {" "}
                     <Badge className="cursor-pointer" variant="outline">
                       {i}
@@ -204,8 +203,8 @@ export default function SingleProduct({ id }: { id: string }) {
               </p>
               <p>
                 <strong>Allergens:</strong>
-                {product?.allergens.map((a) => (
-                  <span>
+                {product?.allergens.map((a, i) => (
+                  <span key={i}>
                     {" "}
                     <Badge className="cursor-pointer" variant="outline">
                       {a}
@@ -221,8 +220,8 @@ export default function SingleProduct({ id }: { id: string }) {
               </p>
               <p>
                 <strong>Certifications:</strong>
-                {product?.certifications.map((c) => (
-                  <span>
+                {product?.certifications.map((c, i) => (
+                  <span key={i}>
                     {" "}
                     <Badge className="cursor-pointer" variant="outline">
                       {c}
