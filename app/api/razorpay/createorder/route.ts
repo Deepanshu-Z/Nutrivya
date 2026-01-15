@@ -4,12 +4,12 @@ import db from "@/db/db";
 import { products } from "@/db/schema";
 import { eq } from "drizzle-orm";
 
-const razorpay = new Razorpay({
-  key_id: process.env.RAZORPAY_KEY_ID!,
-  key_secret: process.env.RAZORPAY_KEY_SECRET!,
-});
-
 export async function POST(req: Request) {
+  const razorpay = new Razorpay({
+    key_id: process.env.RAZORPAY_KEY_ID!,
+    key_secret: process.env.RAZORPAY_KEY_SECRET!,
+  });
+
   const { searchParams } = new URL(req.url);
   const productId = searchParams.get("productId");
   console.log(productId);
