@@ -15,8 +15,5 @@ export async function POST(req: Request) {
   if (expectedSignature !== razorpay_signature) {
     return NextResponse.json({ success: false }, { status: 400 });
   }
-
-  // ✅ mark order PAID in DB here
-
   return NextResponse.json({ success: true });
 }

@@ -1,7 +1,10 @@
+export const runtime = "nodejs";
+
 import crypto from "crypto";
 import { NextResponse } from "next/server";
 
 export async function POST(req: Request) {
+  console.log("WEBHOOk RAANNNN!!!!!!!!!!");
   const body = await req.text();
   const signature = req.headers.get("x-razorpay-signature")!;
 

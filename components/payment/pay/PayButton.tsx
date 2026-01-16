@@ -44,6 +44,7 @@ export default function PayButton({ productId }: PayButtonProps) {
         order_id: data.order.id,
         name: "Tulsiveda",
         handler: async (response: any) => {
+          console.log("@@RESPONSE: ", response);
           await fetch("/api/razorpay/verifypayment", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
