@@ -24,8 +24,6 @@ const page = () => {
     const response = await axios.get("/api/cart/fetchcart");
 
     if (response.data.success) {
-      console.log(response.data.items);
-
       setProducts(response.data.items);
       setLoading(false);
     } else {

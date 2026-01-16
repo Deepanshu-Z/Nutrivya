@@ -10,6 +10,7 @@ import axios from "axios";
 import EmptyCartPage from "./EmptyCart";
 import { ArrowLeft } from "lucide-react";
 import { useRouter } from "next/navigation";
+import PayButton from "@/components/payment/razorpay/cartproducts/PayButton";
 type PropType = {
   loading: boolean;
   products: ProductType[];
@@ -30,6 +31,18 @@ export const CartItems = ({ loading, products, setProducts }: PropType) => {
   });
   const router = useRouter();
   const { data: session, status } = useSession();
+  const totalDiscount = products.reduce(
+    (sum, p) => sum + (p.discountPrice ?? 0),
+    0
+  );
+  const tax = products.reduce((totalTax, p) => {
+    const price = p.price ?? 0;
+    const discount = p.discountPrice ?? 0;
+    const taxableAmount = price - discount;
+
+    return totalTax + (taxableAmount * 5) / 100;
+  }, 0);
+
   useEffect(() => {
     const total = products.reduce((sum, p) => {
       const price = p.discountPrice ?? p.price;
@@ -189,7 +202,7 @@ export const CartItems = ({ loading, products, setProducts }: PropType) => {
                   {/* PRICE */}
                   <div className="sm:ml-auto">
                     <h4 className="text-[15px] font-semibold text-slate-900">
-                      ₹{price * p.quantity}
+                      ₹{p.price * p.quantity}
                     </h4>
                   </div>
                 </div>
@@ -208,34 +221,37 @@ export const CartItems = ({ loading, products, setProducts }: PropType) => {
             <ul className="text-slate-500 font-medium mt-8 space-y-4">
               <li className="flex flex-wrap gap-4 text-sm">
                 Discount{" "}
-                <span className="ml-auto text-slate-900 font-semibold"></span>
-              </li>
-              <li className="flex flex-wrap gap-4 text-sm">
-                Shipping{" "}
                 <span className="ml-auto text-slate-900 font-semibold">
-                  ₹0.00
+                  -₹{totalDiscount}
                 </span>
               </li>
               <li className="flex flex-wrap gap-4 text-sm">
-                Tax{" "}
+                Shipping{" "}
+                <span className="ml-auto text-green-900 font-semibold">
+                  FREE
+                </span>
+              </li>
+              <li className="flex flex-wrap gap-4 text-sm">
+                Tax (5%){" "}
                 <span className="ml-auto text-slate-900 font-semibold">
-                  ₹0.00
+                  +₹{tax}
                 </span>
               </li>
               <li className="flex flex-wrap gap-4 text-sm text-slate-900">
                 Total{" "}
-                <span className="ml-auto font-semibold">₹{totalAmount}</span>
+                <span className="ml-auto font-semibold">
+                  ₹{totalAmount + tax}
+                </span>
               </li>
             </ul>
             <div className="mt-8 space-y-3">
-              <Link href={"/checkout"}>
-                <Button
+              <PayButton />
+              {/* <Button
                   type="button"
                   className="text-sm px-4 py-2.5 w-full font-medium tracking-wide bg-blue-600 hover:bg-blue-700 text-white rounded-md cursor-pointer"
                 >
                   Checkout
-                </Button>
-              </Link>
+                </Button> */}
               <Link href={"/"}>
                 <Button
                   type="button"

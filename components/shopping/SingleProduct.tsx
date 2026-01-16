@@ -17,7 +17,7 @@ import { string } from "zod";
 import AddToCart from "@/components/shopping/components/AddToCart";
 import he from "he";
 import axios from "axios";
-import PayButton from "../payment/pay/PayButton";
+import PayButton from "../payment/razorpay/singleproduct/PayButton";
 import { getToken } from "next-auth/jwt";
 import { getSession, useSession } from "next-auth/react";
 import Link from "next/link";

@@ -13,7 +13,7 @@ declare global {
 type PayButtonProps = {
   productId: string;
 };
-export default function PayButton({ productId }: PayButtonProps) {
+export default function PayButton() {
   ///VARS......................///////////////////
   const [buyError, setBuyError] = useState("");
   const [buyLoading, setBuyLoading] = useState<boolean>(false);
@@ -30,7 +30,7 @@ export default function PayButton({ productId }: PayButtonProps) {
       setBuyLoading(true);
 
       const { data } = await axios.post(
-        `/api/razorpay/createorder?productId=${productId}`
+        "/api/razorpay/createorder/cartproducts"
       );
 
       if (!data?.success) {
