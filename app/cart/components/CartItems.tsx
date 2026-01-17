@@ -31,17 +31,23 @@ export const CartItems = ({ loading, products, setProducts }: PropType) => {
   });
   const router = useRouter();
   const { data: session, status } = useSession();
-  const totalDiscount = products.reduce(
-    (sum, p) => sum + (p.discountPrice ?? 0),
-    0
-  );
-  const tax = products.reduce((totalTax, p) => {
-    const price = p.price ?? 0;
-    const discount = p.discountPrice ?? 0;
-    const taxableAmount = price - discount;
 
-    return totalTax + (taxableAmount * 5) / 100;
+  const subtotal = products.reduce((sum, p) => {
+    const finalUnitPrice = p.discountPrice ?? p.price;
+    return sum + finalUnitPrice;
   }, 0);
+
+  // 2️⃣ Total discount (ONLY for display)
+  const totalDiscount = products.reduce((sum, p) => {
+    if (p.discountPrice == null) return sum;
+    return sum + (p.price - p.discountPrice);
+  }, 0);
+
+  // 3️⃣ Tax (5% ONCE on subtotal)
+  const tax = (subtotal * 5) / 100;
+
+  // 4️⃣ Final total
+  const total = subtotal + tax;
 
   useEffect(() => {
     const total = products.reduce((sum, p) => {
