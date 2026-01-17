@@ -23,7 +23,6 @@ export type Details = {
 
 export const CartItems = ({ loading, products, setProducts }: PropType) => {
   const [coupon, setCoupon] = useState<boolean>(false);
-  const [totalAmount, setTotalAmount] = useState(0);
   const [modal, setModal] = useState<boolean>(false);
   const [details, setDetails] = useState<Details>({
     cartItemId: "",
@@ -31,32 +30,26 @@ export const CartItems = ({ loading, products, setProducts }: PropType) => {
   });
   const router = useRouter();
   const { data: session, status } = useSession();
-
+  // 1️⃣ Subtotal (after discount, WITH quantity)
   const subtotal = products.reduce((sum, p) => {
-    const finalUnitPrice = p.discountPrice ?? p.price;
-    return sum + finalUnitPrice;
+    const unitPrice = p.discountPrice ?? p.price;
+    return sum + unitPrice * p.quantity;
   }, 0);
 
   // 2️⃣ Total discount (ONLY for display)
   const totalDiscount = products.reduce((sum, p) => {
-    if (p.discountPrice == null) return sum;
-    return sum + (p.price - p.discountPrice);
+    if (!p.discountPrice) return sum;
+    return sum + (p.price - p.discountPrice) * p.quantity;
   }, 0);
 
-  // 3️⃣ Tax (5% ONCE on subtotal)
+  // 3️⃣ Tax (5% ONCE)
   const tax = (subtotal * 5) / 100;
 
   // 4️⃣ Final total
   const total = subtotal + tax;
 
-  useEffect(() => {
-    const total = products.reduce((sum, p) => {
-      const price = p.discountPrice ?? p.price;
-      return sum + price * p.quantity;
-    }, 0);
-
-    setTotalAmount(total);
-  }, [products]);
+  console.log("@@PRODUCTS INFO ARE: ", products);
+  useEffect(() => {}, [products]);
 
   const updateQuantity = async (
     productId: number,
@@ -244,12 +237,10 @@ export const CartItems = ({ loading, products, setProducts }: PropType) => {
                 </span>
               </li>
               <li className="flex flex-wrap gap-4 text-sm text-slate-900">
-                Total{" "}
-                <span className="ml-auto font-semibold">
-                  ₹{totalAmount + tax}
-                </span>
+                Total <span className="ml-auto font-semibold">₹{total}</span>
               </li>
             </ul>
+
             <div className="mt-8 space-y-3">
               <PayButton />
               {/* <Button
