@@ -8,6 +8,8 @@ import {
   pgEnum,
   varchar,
   jsonb,
+  index,
+  uniqueIndex,
 } from "drizzle-orm/pg-core";
 import { drizzle } from "drizzle-orm/postgres-js";
 import type { AdapterAccountType } from "@auth/core/adapters";

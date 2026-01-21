@@ -53,6 +53,19 @@ export default function PayButton({ productId }: PayButtonProps) {
           });
           alert("Payment verified");
         },
+        modal: {
+          ondismiss: () => {
+            // optional backend logging
+            fetch("/api/razorpay/updateorder/cancel", {
+              method: "PATCH",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                orderId: data.order.id,
+                reason: "USER_CANCELLED",
+              }),
+            });
+          },
+        },
       };
 
       const rzp = new window.Razorpay(options);
