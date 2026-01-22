@@ -1,6 +1,6 @@
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import db from "@/db/db";
-import { cart } from "@/db/schema";
+import { cart, orders } from "@/db/schema";
 import { getProductsById } from "@/lib/products/getProductsById";
 import { and, eq } from "drizzle-orm";
 import { getServerSession } from "next-auth";
@@ -14,7 +14,6 @@ export const POST = async () => {
   });
   //@ts-ignore
   const userId = session?.user.id;
-  console.log("@YO YO YO");
   try {
     const response = await db
       .select()
@@ -35,6 +34,13 @@ export const POST = async () => {
       receipt: `rcpt_${Date.now()}`,
     });
 
+    const ins = await db.insert(orders).values({
+      order_id: order.id,
+      user_id: userId,
+      amount: order.amount_due / 100,
+      currency: order.currency,
+      order_status: "created ",
+    });
     return Response.json({ order, success: true });
   } catch (error) {
     return Response.json({ success: false });
