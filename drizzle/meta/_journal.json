@@ -204,6 +204,20 @@
       "when": 1768819728321,
       "tag": "0028_kind_calypso",
       "breakpoints": true
+    },
+    {
+      "idx": 29,
+      "version": "7",
+      "when": 1769067372232,
+      "tag": "0029_vengeful_darkstar",
+      "breakpoints": true
+    },
+    {
+      "idx": 30,
+      "version": "7",
+      "when": 1769067584358,
+      "tag": "0030_cultured_frank_castle",
+      "breakpoints": true
     }
   ]
 }

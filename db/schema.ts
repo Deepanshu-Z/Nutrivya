@@ -91,21 +91,18 @@ export const orderStatus = pgEnum("orderStatus", [
 export const paymentStatus = pgEnum("payment_status", ["success", "failed"]);
 
 /////////////////////////TABLES///////////////////////////////////
-export const users = pgTable(
-  "user",
-  {
-    id: text("id")
-      .primaryKey()
-      .$defaultFn(() => crypto.randomUUID()),
-    email: text("email").notNull(),
-    createdAt: timestamp("created_at", { mode: "date" }).notNull().defaultNow(),
-    role: rolesEnum().default("user"),
-  },
-  (t) => ({
-    emailIdx: uniqueIndex("users_email_idx").on(t.email),
-    createdAtIdx: index("users_created_at_idx").on(t.createdAt),
-  }),
-);
+export const users = pgTable("user", {
+  id: text("id")
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  name: text("name"),
+  email: text("email").unique(),
+  emailVerified: timestamp("emailVerified", { mode: "date" }),
+  image: text("image"),
+  phone: text("phone").default(""),
+  role: rolesEnum().default("user"),
+  createdAt: timestamp("created_at", { mode: "date" }).notNull().defaultNow(),
+});
 
 export const accounts = pgTable(
   "account",
@@ -338,6 +335,27 @@ export const payments = pgTable("payments", {
   method: text("method"),
 
   payment_status: paymentStatus("payment_status").notNull(),
+
+  createdAt: timestamp("created_at", { withTimezone: true })
+    .notNull()
+    .defaultNow(),
+});
+export const orderItems = pgTable("order_items", {
+  id: text("id")
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+
+  order_id: text("order_id")
+    .notNull()
+    .references(() => orders.order_id, { onDelete: "cascade" }),
+
+  product_id: text("product_id").notNull(),
+
+  product_name: text("product_name").notNull(), // snapshot
+
+  price: integer("price").notNull(), // paise at time of purchase
+
+  quantity: integer("quantity").notNull().default(1),
 
   createdAt: timestamp("created_at", { withTimezone: true })
     .notNull()
