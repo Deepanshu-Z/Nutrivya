@@ -17,7 +17,7 @@ import {
   TrendingUp,
   TrendingDown,
   Users,
-  Package,
+  User,
   ArrowUpRight,
   ArrowDownRight,
   MoreHorizontal,
@@ -38,6 +38,8 @@ import {
   Pie,
   Cell,
 } from "recharts";
+import { useEffect, useState } from "react";
+import axios from "axios";
 
 const revenueData = [
   { name: "Jan", revenue: 4000, orders: 240 },
@@ -162,6 +164,17 @@ const getStatusBadge = (status: string) => {
 };
 
 const Index = () => {
+  const [total, setTotal] = useState("");
+  useEffect(() => {
+    const fetchStats = async () => {
+      const response = await axios.get("/api/admin/stats");
+      if (response.data.success === true) {
+        console.log(response.data.stats);
+      } else console.log(response.data.message, response.data.error);
+    };
+    fetchStats();
+  }, []);
+
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
@@ -170,7 +183,7 @@ const Index = () => {
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-2">
               <div className="h-8 w-8 rounded-lg bg-primary flex items-center justify-center">
-                <Package className="h-5 w-5 text-primary-foreground" />
+                <User className="h-5 w-5 text-primary-foreground" />
               </div>
               <span className="text-xl font-bold">AdminHub</span>
             </div>

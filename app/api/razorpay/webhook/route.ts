@@ -4,9 +4,14 @@ import db from "@/db/db";
 import { orders, payments } from "@/db/schema";
 import crypto from "crypto";
 import { eq } from "drizzle-orm";
+import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
+import { authOptions } from "../../auth/[...nextauth]/route";
 
 export async function POST(req: Request) {
+  const session = await getServerSession(authOptions);
+  //@ts-ignore
+  const userId = session?.user.id;
   console.log("WEBHOOk RAANNNN!!!!!!!!!!");
   const body = await req.text();
   const signature = req.headers.get("x-razorpay-signature")!;
@@ -38,10 +43,11 @@ export async function POST(req: Request) {
 
         // 2. Create payment record
         await tx.insert(payments).values({
+          user_id: userId,
           order_id: payment.order_id, // 👈 FROM WEBHOOK
           payment_id: payment.id,
           signature, // webhook signature header
-          amount: payment.amount, // paise
+          amount: payment.amount / 100, // paise
           method: payment.method,
           payment_status: "success",
         });
@@ -63,9 +69,10 @@ export async function POST(req: Request) {
           .where(eq(orders.order_id, payment.order_id));
 
         await tx.insert(payments).values({
+          user_id: userId,
           order_id: payment.order_id,
           payment_id: payment.id,
-          amount: payment.amount,
+          amount: payment.amount / 100,
           method: payment.method,
           payment_status: "failed",
         });
