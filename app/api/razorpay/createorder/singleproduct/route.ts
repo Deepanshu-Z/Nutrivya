@@ -1,7 +1,7 @@
 import Razorpay from "razorpay";
 import { NextResponse } from "next/server";
 import db from "@/db/db";
-import { orders, products } from "@/db/schema";
+import { orderItems, orders, products } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
@@ -20,6 +20,7 @@ export async function POST(req: Request) {
   if (!productId)
     return Response.json({ status: 500, message: "No product ID " });
   try {
+    //FINDING PRODUCTs
     const product = await db
       .select({
         price: products.price,
@@ -31,6 +32,7 @@ export async function POST(req: Request) {
     if (!product)
       return Response.json({ status: 404, message: "Product does not found" });
 
+    // CREATING ORDER ID
     const order = await razorpay.orders.create({
       amount:
         (product[0].price - product[0].discountPrice!) * 100 +
@@ -39,14 +41,22 @@ export async function POST(req: Request) {
       receipt: `rcpt_${Date.now()}`,
     });
 
-    const response = await db.insert(orders).values({
+    // SAVING INTO DB
+    const saveOrder = await db.insert(orders).values({
       order_id: order.id,
       user_id: userId,
       amount: order.amount_due / 100,
       currency: order.currency,
-      order_status: "created ",
+      order_status: "created",
     });
 
+    //MAPPING ORDER_ITEMS WITH ORDER ID
+    const order_items = await db.insert(orderItems).values({
+      order_id: order.id,
+      product_id: productId,
+      price: order.amount_due / 100,
+      quantity: 1,
+    });
     return Response.json({
       order,
       success: true,

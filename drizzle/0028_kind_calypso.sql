@@ -1,4 +1,4 @@
-CREATE TYPE "public"."orderStatus" AS ENUM('created ', ' paid ', ' failed ', ' cancelled');--> statement-breakpoint
+CREATE TYPE "public"."orderStatus" AS ENUM('created ', ' paid ', ' failed ', 'cancelled');--> statement-breakpoint
 CREATE TYPE "public"."payment_status" AS ENUM('success', 'failed');--> statement-breakpoint
 CREATE TABLE "orders" (
 	"id" text PRIMARY KEY NOT NULL,

@@ -39,7 +39,7 @@ export const POST = async () => {
       user_id: userId,
       amount: order.amount_due / 100,
       currency: order.currency,
-      order_status: "created ",
+      order_status: "created",
     });
     return Response.json({ order, success: true });
   } catch (error) {

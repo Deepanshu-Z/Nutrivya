@@ -82,10 +82,10 @@ export const status = pgEnum("status", [
 ]);
 
 export const orderStatus = pgEnum("orderStatus", [
-  "created ",
-  " paid ",
-  " failed ",
-  " cancelled",
+  "created",
+  "paid",
+  "failed",
+  "cancelled",
 ]);
 
 export const paymentStatus = pgEnum("payment_status", ["success", "failed"]);
@@ -326,7 +326,7 @@ export const payments = pgTable("payments", {
 
   payment_id: text("payment_id").notNull().unique(),
 
-  signature: text("signature").notNull(),
+  signature: text("signature"),
 
   provider: text("provider").notNull().default("razorpay"),
 
@@ -351,8 +351,6 @@ export const orderItems = pgTable("order_items", {
 
   product_id: text("product_id").notNull(),
 
-  product_name: text("product_name").notNull(), // snapshot
-
   price: integer("price").notNull(), // paise at time of purchase
 
   quantity: integer("quantity").notNull().default(1),
@@ -373,4 +371,5 @@ export default {
   ticket,
   orders,
   payments,
+  orderItems,
 };

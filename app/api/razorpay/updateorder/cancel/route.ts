@@ -8,7 +8,7 @@ export const PATCH = async (req: Request) => {
     const response = await db
       .update(orders)
       .set({
-        order_status: " cancelled",
+        order_status: "cancelled",
       })
       .where(eq(orders.order_id, orderId));
 

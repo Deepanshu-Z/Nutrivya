@@ -81,12 +81,8 @@
           "name": "account_userId_user_id_fk",
           "tableFrom": "account",
           "tableTo": "user",
-          "columnsFrom": [
-            "userId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["userId"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -163,12 +159,8 @@
           "name": "addresses_userId_user_id_fk",
           "tableFrom": "addresses",
           "tableTo": "user",
-          "columnsFrom": [
-            "userId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["userId"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -238,12 +230,8 @@
           "name": "authenticator_userId_user_id_fk",
           "tableFrom": "authenticator",
           "tableTo": "user",
-          "columnsFrom": [
-            "userId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["userId"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -253,9 +241,7 @@
         "authenticator_credentialID_unique": {
           "name": "authenticator_credentialID_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "credentialID"
-          ]
+          "columns": ["credentialID"]
         }
       },
       "policies": {},
@@ -293,12 +279,8 @@
           "name": "cart_userId_user_id_fk",
           "tableFrom": "cart",
           "tableTo": "user",
-          "columnsFrom": [
-            "userId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["userId"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -345,12 +327,8 @@
           "name": "cartItems_cartId_cart_id_fk",
           "tableFrom": "cartItems",
           "tableTo": "cart",
-          "columnsFrom": [
-            "cartId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["cartId"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -358,12 +336,8 @@
           "name": "cartItems_productId_products_id_fk",
           "tableFrom": "cartItems",
           "tableTo": "products",
-          "columnsFrom": [
-            "productId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["productId"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -424,12 +398,8 @@
           "name": "chats_ticket_id_ticket_id_fk",
           "tableFrom": "chats",
           "tableTo": "ticket",
-          "columnsFrom": [
-            "ticket_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["ticket_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -495,12 +465,8 @@
           "name": "order_items_order_id_orders_order_id_fk",
           "tableFrom": "order_items",
           "tableTo": "orders",
-          "columnsFrom": [
-            "order_id"
-          ],
-          "columnsTo": [
-            "order_id"
-          ],
+          "columnsFrom": ["order_id"],
+          "columnsTo": ["order_id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -574,9 +540,7 @@
         "orders_order_id_unique": {
           "name": "orders_order_id_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "order_id"
-          ]
+          "columns": ["order_id"]
         }
       },
       "policies": {},
@@ -651,12 +615,8 @@
           "name": "payments_order_id_orders_order_id_fk",
           "tableFrom": "payments",
           "tableTo": "orders",
-          "columnsFrom": [
-            "order_id"
-          ],
-          "columnsTo": [
-            "order_id"
-          ],
+          "columnsFrom": ["order_id"],
+          "columnsTo": ["order_id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -666,9 +626,7 @@
         "payments_payment_id_unique": {
           "name": "payments_payment_id_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "payment_id"
-          ]
+          "columns": ["payment_id"]
         }
       },
       "policies": {},
@@ -862,12 +820,8 @@
           "name": "ratings_userId_user_id_fk",
           "tableFrom": "ratings",
           "tableTo": "user",
-          "columnsFrom": [
-            "userId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["userId"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -875,12 +829,8 @@
           "name": "ratings_productId_products_id_fk",
           "tableFrom": "ratings",
           "tableTo": "products",
-          "columnsFrom": [
-            "productId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["productId"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -920,12 +870,8 @@
           "name": "session_userId_user_id_fk",
           "tableFrom": "session",
           "tableTo": "user",
-          "columnsFrom": [
-            "userId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["userId"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -980,12 +926,8 @@
           "name": "ticket_user_id_user_id_fk",
           "tableFrom": "ticket",
           "tableTo": "user",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["user_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -1060,9 +1002,7 @@
         "user_email_unique": {
           "name": "user_email_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "email"
-          ]
+          "columns": ["email"]
         }
       },
       "policies": {},
@@ -1105,11 +1045,7 @@
     "public.cart_status": {
       "name": "cart_status",
       "schema": "public",
-      "values": [
-        "active",
-        "completed",
-        "abandoned"
-      ]
+      "values": ["active", "completed", "abandoned"]
     },
     "public.categories": {
       "name": "categories",
@@ -1125,39 +1061,22 @@
     "public.medicineType": {
       "name": "medicineType",
       "schema": "public",
-      "values": [
-        "powder",
-        "capsule",
-        "tablet",
-        "liquid"
-      ]
+      "values": ["powder", "capsule", "tablet", "liquid"]
     },
     "public.orderStatus": {
       "name": "orderStatus",
       "schema": "public",
-      "values": [
-        "created ",
-        " paid ",
-        " failed ",
-        " cancelled"
-      ]
+      "values": ["created", "paid", "failed", "cancelled"]
     },
     "public.payment_status": {
       "name": "payment_status",
       "schema": "public",
-      "values": [
-        "success",
-        "failed"
-      ]
+      "values": ["success", "failed"]
     },
     "public.roles": {
       "name": "roles",
       "schema": "public",
-      "values": [
-        "user",
-        "support",
-        "admin"
-      ]
+      "values": ["user", "support", "admin"]
     },
     "public.states": {
       "name": "states",
@@ -1204,12 +1123,7 @@
     "public.status": {
       "name": "status",
       "schema": "public",
-      "values": [
-        "pending",
-        "open",
-        "completed",
-        "replied"
-      ]
+      "values": ["pending", "open", "completed", "replied"]
     }
   },
   "schemas": {},
