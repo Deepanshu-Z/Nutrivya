@@ -25,7 +25,7 @@ const Page = () => {
     failed: "bg-yellow-100 text-yellow-700 border-yellow-200",
   };
   const [statusFilter, setStatusFilter] = useState<
-    "ALL" | "PAID" | "FAILED" | "CANCELLED"
+    "ALL" | "paid" | "failed" | "cancelled"
   >("ALL");
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
 
@@ -34,7 +34,7 @@ const Page = () => {
       try {
         setLoading(true);
         const res = await axios.get(
-          `/api/admin/getorders?page=${page}&limit=${LIMIT}`,
+          `/api/admin/getorders?page=${page}&limit=${LIMIT}&statusFilter=${statusFilter}`,
         );
 
         if (res.data.success) {
@@ -47,7 +47,7 @@ const Page = () => {
     };
 
     fetchOrders();
-  }, [page]);
+  }, [page, statusFilter]);
 
   return (
     <div className="space-y-6">
@@ -62,9 +62,9 @@ const Page = () => {
             className="border rounded-md px-3 py-1 text-sm font-semibold"
           >
             <option value="ALL">All</option>
-            <option value="PAID">Paid</option>
-            <option value="FAILED">Failed</option>
-            <option value="CANCELLED">Cancelled</option>
+            <option value="paid">Paid</option>
+            <option value="failed">Failed</option>
+            <option value="cancelled">Cancelled</option>
           </select>
 
           {/* Sort Order */}
@@ -83,7 +83,7 @@ const Page = () => {
       <div className="grid gap-4">
         {loading && (
           <p className="text-sm text-muted-foreground font-semibold">
-            Loading...
+            please wait Loading...
           </p>
         )}
 
@@ -131,6 +131,7 @@ const Page = () => {
           </div>
         ))}
       </div>
+
       {/* Pagination */}
       {totalPages > 1 && (
         <Pagination>
