@@ -11,6 +11,7 @@ import {
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { Order } from "../page";
+import Link from "next/link";
 
 const LIMIT = 10;
 
@@ -24,6 +25,7 @@ const Page = () => {
     cancelled: "bg-red-100 text-red-700 border-red-200",
     failed: "bg-yellow-100 text-yellow-700 border-yellow-200",
   };
+
   const [statusFilter, setStatusFilter] = useState<
     "ALL" | "paid" | "failed" | "cancelled"
   >("ALL");
@@ -49,8 +51,25 @@ const Page = () => {
     fetchOrders();
   }, [page, statusFilter]);
 
+  const fetchUserDetails = async (userId: string, orderId: string) => {
+    const response = await axios.get(
+      `/api/admin/transactions/userspecific?userId=${userId}&orderId=${orderId}`,
+    );
+    if (response.data.success) {
+      console.log(
+        "User Details: ",
+        response.data.details.userDetails,
+        "Specific Transaction details: ",
+        response.data.details.specificTransaction,
+        "All Transaction Performed by user details: ",
+        response.data.details.allTransactions,
+      );
+    } else console.log("ERROR:!!!!!!!!", response.data.error);
+  };
+
   return (
     <div className="space-y-6">
+      {/* Header */}
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-lg font-bold">Orders</h2>
 
@@ -93,43 +112,45 @@ const Page = () => {
           </p>
         )}
 
-        {orders.map((order) => (
-          <div
-            key={order.id}
-            className="flex items-center justify-between rounded-lg border p-4 hover:bg-muted/50 transition"
-          >
-            {/* Left */}
-            <div>
-              <p className="font-bold text-base">{order.order_id}</p>
-              <p className="text-sm font-semibold text-muted-foreground">
-                User: {order.user_id}
-              </p>
+        {!loading &&
+          orders.map((order) => (
+            <div
+              key={order.id}
+              className="flex items-center justify-between rounded-lg border p-4 hover:bg-muted/50 transition"
+            >
+              {/* Left */}
+              <div>
+                <p className="font-bold text-base">{order.order_id}</p>
+                <p className="text-sm font-semibold text-muted-foreground">
+                  User: {order.user_id}
+                </p>
+              </div>
+
+              {/* Right */}
+              <div className="flex items-center gap-4">
+                <p className="font-bold">₹{order.amount}</p>
+
+                {/* Status Badge */}
+                <span
+                  className={`px-3 py-1 text-xs font-bold rounded-full border ${
+                    statusStyles[order.order_status] ??
+                    "bg-gray-100 text-gray-600"
+                  }`}
+                >
+                  {order.order_status}
+                </span>
+
+                {/* Show More */}
+                <Link
+                  href={`/admin/orders/userspecific?userId=${order.user_id}&orderId=${order.order_id}`}
+                >
+                  <button className="text-sm font-semibold text-primary hover:underline cursor-pointer">
+                    Show details
+                  </button>
+                </Link>
+              </div>
             </div>
-
-            {/* Right */}
-            <div className="flex items-center gap-4">
-              <p className="font-bold">₹{order.amount}</p>
-
-              {/* Status Badge */}
-              <span
-                className={`px-3 py-1 text-xs font-bold rounded-full border ${
-                  statusStyles[order.order_status] ??
-                  "bg-gray-100 text-gray-600"
-                }`}
-              >
-                {order.order_status}
-              </span>
-
-              {/* Show More */}
-              <button
-                onClick={() => console.log("Show details:", order.id)}
-                className="text-sm font-semibold text-primary hover:underline cursor-pointer"
-              >
-                Show details
-              </button>
-            </div>
-          </div>
-        ))}
+          ))}
       </div>
 
       {/* Pagination */}

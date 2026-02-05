@@ -9,24 +9,23 @@ export const GET = async (req: Request) => {
   const page = Number(searchParams.get("page")) || 1;
   const status = searchParams.get("statusFilter");
   const offset = (page - 1) * limit;
-  console.log(status);
+  type OrderStatus = "created" | "paid" | "failed" | "cancelled";
+
   try {
     const whereCondition =
-      //@ts-ignore
-      status && status !== "ALL" ? eq(orders.order_status, status) : undefined;
+      status && status !== "ALL"
+        ? eq(orders.order_status, status as OrderStatus)
+        : undefined;
 
     // Paginated data
     const recentOrders = await db
       .select()
       .from(orders)
-      .where(whereCondition) // 3. Apply the condition here
+      .where(whereCondition)
       .orderBy(desc(orders.createdAt))
       .limit(limit)
       .offset(offset);
 
-    // Total count
-    // 4. IMPORTANT: Apply the same condition to the count
-    // otherwise pagination will break when filtering
     const [{ count }] = await db
       .select({ count: sql<number>`count(*)` })
       .from(orders)
