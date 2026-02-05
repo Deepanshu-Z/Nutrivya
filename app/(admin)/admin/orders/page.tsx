@@ -15,67 +15,157 @@ import { Order } from "../page";
 const LIMIT = 10;
 
 const Page = () => {
-  const [page, setPage] = useState<number>(1);
-  const [totalPages, setTotalPages] = useState<number>(0);
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(0);
   const [orders, setOrders] = useState<Order[]>([]);
+  const [loading, setLoading] = useState(false);
+  const statusStyles: Record<string, string> = {
+    paid: "bg-green-100 text-green-700 border-green-200",
+    cancelled: "bg-red-100 text-red-700 border-red-200",
+    failed: "bg-yellow-100 text-yellow-700 border-yellow-200",
+  };
+  const [statusFilter, setStatusFilter] = useState<
+    "ALL" | "PAID" | "FAILED" | "CANCELLED"
+  >("ALL");
+  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
+
   useEffect(() => {
     const fetchOrders = async () => {
-      const res = await axios.get(
-        `/api/admin/getorders?page=${page}&limit=${LIMIT}`,
-      );
-      if (res.data.success) {
-        console.log(res.data);
-        console.log("status : ok");
-      } else {
-        console.log(res.data.error);
+      try {
+        setLoading(true);
+        const res = await axios.get(
+          `/api/admin/getorders?page=${page}&limit=${LIMIT}`,
+        );
+
+        if (res.data.success) {
+          setOrders(res.data.data);
+          setTotalPages(res.data.meta.totalPages);
+        }
+      } finally {
+        setLoading(false);
       }
-      setOrders(res.data.data);
-      setTotalPages(res.data.meta.totalPages);
     };
 
     fetchOrders();
   }, [page]);
 
   return (
-    <div>
-      {orders.map((o, index) => (
-        <div>{o.user_id}</div>
-      ))}
-      <Pagination>
-        <PaginationContent>
-          {/* Previous */}
-          <PaginationItem>
-            <PaginationPrevious
-              onClick={() => page > 1 && setPage(page - 1)}
-              className={page === 1 ? "pointer-events-none opacity-50" : ""}
-            />
-          </PaginationItem>
+    <div className="space-y-6">
+      <div className="flex items-center justify-between mb-4">
+        <h2 className="text-lg font-bold">Orders</h2>
 
-          {/* Page Numbers */}
-          {Array.from({ length: totalPages }, (_, i) => i + 1)
-            .slice(Math.max(0, page - 2), page + 1)
-            .map((p) => (
-              <PaginationItem key={p}>
-                <PaginationLink
-                  isActive={p === page}
-                  onClick={() => setPage(p)}
-                >
-                  {p}
-                </PaginationLink>
-              </PaginationItem>
-            ))}
+        <div className="flex items-center gap-4">
+          {/* Status Filter */}
+          <select
+            value={statusFilter}
+            onChange={(e) => setStatusFilter(e.target.value as any)}
+            className="border rounded-md px-3 py-1 text-sm font-semibold"
+          >
+            <option value="ALL">All</option>
+            <option value="PAID">Paid</option>
+            <option value="FAILED">Failed</option>
+            <option value="CANCELLED">Cancelled</option>
+          </select>
 
-          {/* Next */}
-          <PaginationItem>
-            <PaginationNext
-              onClick={() => page < totalPages && setPage(page + 1)}
-              className={
-                page === totalPages ? "pointer-events-none opacity-50" : ""
-              }
-            />
-          </PaginationItem>
-        </PaginationContent>
-      </Pagination>
+          {/* Sort Order */}
+          <select
+            value={sortOrder}
+            onChange={(e) => setSortOrder(e.target.value as "asc" | "desc")}
+            className="border rounded-md px-3 py-1 text-sm font-semibold"
+          >
+            <option value="desc">Newest First</option>
+            <option value="asc">Oldest First</option>
+          </select>
+        </div>
+      </div>
+
+      {/* Orders List */}
+      <div className="grid gap-4">
+        {loading && (
+          <p className="text-sm text-muted-foreground font-semibold">
+            Loading...
+          </p>
+        )}
+
+        {!loading && orders.length === 0 && (
+          <p className="text-sm text-muted-foreground font-semibold">
+            No orders found
+          </p>
+        )}
+
+        {orders.map((order) => (
+          <div
+            key={order.id}
+            className="flex items-center justify-between rounded-lg border p-4 hover:bg-muted/50 transition"
+          >
+            {/* Left */}
+            <div>
+              <p className="font-bold text-base">{order.order_id}</p>
+              <p className="text-sm font-semibold text-muted-foreground">
+                User: {order.user_id}
+              </p>
+            </div>
+
+            {/* Right */}
+            <div className="flex items-center gap-4">
+              <p className="font-bold">₹{order.amount}</p>
+
+              {/* Status Badge */}
+              <span
+                className={`px-3 py-1 text-xs font-bold rounded-full border ${
+                  statusStyles[order.order_status] ??
+                  "bg-gray-100 text-gray-600"
+                }`}
+              >
+                {order.order_status}
+              </span>
+
+              {/* Show More */}
+              <button
+                onClick={() => console.log("Show details:", order.id)}
+                className="text-sm font-semibold text-primary hover:underline cursor-pointer"
+              >
+                Show details
+              </button>
+            </div>
+          </div>
+        ))}
+      </div>
+      {/* Pagination */}
+      {totalPages > 1 && (
+        <Pagination>
+          <PaginationContent>
+            <PaginationItem>
+              <PaginationPrevious
+                onClick={() => page > 1 && setPage(page - 1)}
+                className={page === 1 ? "pointer-events-none opacity-50" : ""}
+              />
+            </PaginationItem>
+
+            {Array.from({ length: totalPages }, (_, i) => i + 1)
+              .slice(Math.max(0, page - 2), page + 1)
+              .map((p) => (
+                <PaginationItem key={p}>
+                  <PaginationLink
+                    isActive={p === page}
+                    onClick={() => setPage(p)}
+                  >
+                    {p}
+                  </PaginationLink>
+                </PaginationItem>
+              ))}
+
+            <PaginationItem>
+              <PaginationNext
+                onClick={() => page < totalPages && setPage(page + 1)}
+                className={
+                  page === totalPages ? "pointer-events-none opacity-50" : ""
+                }
+              />
+            </PaginationItem>
+          </PaginationContent>
+        </Pagination>
+      )}
     </div>
   );
 };
