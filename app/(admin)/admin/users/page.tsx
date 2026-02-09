@@ -54,7 +54,6 @@ export default function UsersPage() {
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
-
   useEffect(() => {
     const fetchUsers = async () => {
       try {
@@ -90,6 +89,19 @@ export default function UsersPage() {
     });
   };
 
+  const deleteUser = async (id: string) => {
+    const response = await axios.delete("/api/admin/users/deleteuser", {
+      data: { userId: id },
+    });
+
+    console.log(response.data.body);
+    if (response.data.success) {
+      console.log(response.data.message);
+      window.location.reload();
+    } else {
+      console.log(response.data.error);
+    }
+  };
   return (
     <div className="p-6">
       <Card className="w-full max-w-6xl mx-auto">
@@ -236,7 +248,10 @@ export default function UsersPage() {
                                 View Transactions
                               </DropdownMenuItem>
                             </Link>
-                            <DropdownMenuItem className="text-red-600 cursor-pointer">
+                            <DropdownMenuItem
+                              className="text-red-600 cursor-pointer"
+                              onClick={() => deleteUser(user.id)}
+                            >
                               Delete User
                             </DropdownMenuItem>
                           </DropdownMenuContent>
