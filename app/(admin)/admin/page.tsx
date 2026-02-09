@@ -358,10 +358,13 @@ export default function Dashboard() {
 
                           {/* Status */}
                           <Badge variant="outline">{order.order_status}</Badge>
-
-                          <Button variant="ghost" size="icon">
-                            <MoreHorizontal className="h-4 w-4" />
-                          </Button>
+                          <Link
+                            href={`/admin/orders/userspecific?userId=${order.user_id}&orderId=${order.order_id}`}
+                          >
+                            <button className="ml-2 cursor-pointer">
+                              Show Details
+                            </button>
+                          </Link>
                         </div>
                       </div>
                     </div>
