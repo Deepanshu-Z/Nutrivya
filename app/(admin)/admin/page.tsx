@@ -7,7 +7,6 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -17,8 +16,6 @@ import {
   CreditCard,
   XCircle,
   ShoppingCart,
-  ArrowUpRight,
-  MoreHorizontal,
   Download,
   Filter,
   Users,
@@ -38,10 +35,42 @@ import {
   Cell,
 } from "recharts";
 
-import { useEffect, useState } from "react";
 import axios from "axios";
 import Link from "next/link";
+import { useQuery } from "@tanstack/react-query";
 
+// ---------------- TYPES ----------------
+type Stats = {
+  totalAmount: number;
+  totalOrders: number;
+  failedPayments: number;
+  cancelledOrders: number;
+};
+
+type Order = {
+  id: string;
+  order_id: string;
+  user_id: string;
+  amount: number;
+  order_status: string;
+};
+
+// ---------------- FETCHERS ----------------
+const fetchStats = async (): Promise<Stats> => {
+  const res = await axios.get("/api/admin/stats");
+  if (!res.data.success) throw new Error("Stats fetch failed");
+  return res.data.stats;
+};
+
+const fetchOrders = async (): Promise<Order[]> => {
+  const res = await axios.get(
+    "/api/admin/getorders?limit=5&page=1&statusFilter=ALL",
+  );
+  if (!res.data.success) throw new Error("Orders fetch failed");
+  return res.data.recentOrders;
+};
+
+// ---------------- STATIC DATA ----------------
 const revenueData = [
   { name: "Jan", revenue: 4000 },
   { name: "Feb", revenue: 3000 },
@@ -52,77 +81,31 @@ const revenueData = [
   { name: "Jul", revenue: 7000 },
 ];
 
-const recentOrders = [
-  {
-    id: "#ORD-7821",
-    customer: "John Smith",
-    amount: "₹299",
-    status: "completed",
-    date: "2 min ago",
-  },
-];
-// ✅ Dynamic Cards (MUST BE INSIDE COMPONENT)
-
-const getStatusBadge = (status: string) => {
-  const variants: Record<string, { className: string }> = {
-    completed: {
-      className: "bg-emerald-500/10 text-emerald-500 border-emerald-500/20",
-    },
-    pending: {
-      className: "bg-amber-500/10 text-amber-500 border-amber-500/20",
-    },
-    failed: {
-      className: "bg-red-500/10 text-red-500 border-red-500/20",
-    },
-    cancelled: {
-      className: "bg-slate-500/10 text-slate-400 border-slate-500/20",
-    },
-  };
-
-  return variants[status] || variants.pending;
-};
-export type Order = {
-  id: string;
-  order_id: string;
-  user_id: string;
-  amount: number;
-  order_status: string;
-};
-
+// ---------------- COMPONENT ----------------
 export default function Dashboard() {
-  // ✅ API Stats State
-  const [stats, setStats] = useState({
-    totalAmount: 0,
-    totalOrders: 0,
-    failedPayments: 0,
-    cancelledOrders: 0,
+  const {
+    data: stats,
+    isLoading: statsLoading,
+    isError: statsError,
+  } = useQuery({
+    queryKey: ["admin-stats"],
+    queryFn: fetchStats,
   });
 
-  const [orders, setOrders] = useState<Order[]>([]);
-  // ✅ Loading State
-  const [loading, setLoading] = useState(true);
+  const {
+    data: orders = [],
+    isLoading: ordersLoading,
+    isError: ordersError,
+  } = useQuery({
+    queryKey: ["admin-orders", { page: 1, limit: 5, status: "ALL" }],
+    queryFn: fetchOrders,
+  });
 
-  // ✅ Fetch Stats from API
-  useEffect(() => {
-    const fetchStats = async () => {
-      setLoading(true);
-      try {
-        const res = await axios.get("/api/admin/stats");
+  if (statsLoading || ordersLoading) return <p>Loading...</p>;
+  if (statsError || ordersError) return <p>Something went wrong</p>;
+  if (!stats) return null;
 
-        if (res.data.success) {
-          setStats(res.data.stats);
-        }
-      } catch (err) {
-        console.log("Error fetching stats:", err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchStats();
-  }, []);
-
-  // ✅ Cards
+  // ---------------- DERIVED DATA ----------------
   const statsCards = [
     {
       title: "Total Revenue",
@@ -131,65 +114,36 @@ export default function Dashboard() {
     },
     {
       title: "Total Orders",
-      value: stats.totalOrders.toString(),
+      value: stats.totalOrders,
       icon: ShoppingCart,
     },
     {
       title: "Failed Payments",
-      value: stats.failedPayments.toString(),
+      value: stats.failedPayments,
       icon: XCircle,
     },
     {
       title: "Cancelled Orders",
-      value: stats.cancelledOrders.toString(),
+      value: stats.cancelledOrders,
       icon: CreditCard,
     },
   ];
 
-  // ✅ Payment Breakdown (Backend Accurate)
-  const totalOrders = stats.totalOrders ?? 0;
-  const failedPayments = stats.failedPayments ?? 0;
-  const cancelledPayments = stats.cancelledOrders ?? 0;
-
-  // Successful = Total - Failed - Cancelled
   const successfulPayments = Math.max(
-    totalOrders - failedPayments - cancelledPayments,
+    stats.totalOrders - stats.failedPayments - stats.cancelledOrders,
     0,
   );
 
-  // ✅ Dynamic Chart Data
   const paymentStatusData = [
-    {
-      name: "Successful",
-      value: successfulPayments,
-      color: "hsl(142, 76%, 36%)",
-    },
-    { name: "Failed", value: failedPayments, color: "hsl(0, 84%, 60%)" },
-    {
-      name: "Cancelled",
-      value: cancelledPayments,
-      color: "hsl(215, 14%, 34%)",
-    },
-  ].filter((item) => item.value > 0);
+    { name: "Successful", value: successfulPayments, color: "#22c55e" },
+    { name: "Failed", value: stats.failedPayments, color: "#ef4444" },
+    { name: "Cancelled", value: stats.cancelledOrders, color: "#64748b" },
+  ].filter((i) => i.value > 0);
 
-  useEffect(() => {
-    const fetchOrders = async () => {
-      const response = await axios.get(
-        `/api/admin/getorders?limit=5&page=1&statusFilter=ALL`,
-      );
-      if (response.data.success) setOrders(response.data.recentOrders);
-      else console.log("error getting orders", response.data.error);
-    };
-    fetchOrders();
-  }, []);
-
-  useEffect(() => {
-    console.log("YOUR RECENT ORDERS ARE: ", orders);
-  }, [orders]);
+  // ---------------- UI ----------------
   return (
     <div className="min-h-screen bg-background">
-      {/* Header */}
-      <header className="sticky top-0 z-50 border-b bg-background/95 backdrop-blur">
+      <header className="sticky top-0 z-50 border-b bg-background/95">
         <div className="container flex h-16 items-center justify-between px-4">
           <div className="flex items-center gap-2">
             <div className="h-8 w-8 rounded-lg bg-primary flex items-center justify-center">
@@ -198,184 +152,119 @@ export default function Dashboard() {
             <span className="text-xl font-bold">AdminHub</span>
           </div>
 
-          <div className="flex items-center gap-4">
-            <Button variant="outline" size="sm" className="gap-2">
-              <Download className="h-4 w-4" />
-              Export
+          <div className="flex gap-2">
+            <Button variant="outline" size="sm">
+              <Download className="h-4 w-4 mr-1" /> Export
             </Button>
-
-            <Button size="sm" className="gap-2">
-              <Filter className="h-4 w-4" />
-              Filters
+            <Button size="sm">
+              <Filter className="h-4 w-4 mr-1" /> Filters
             </Button>
           </div>
         </div>
       </header>
 
       <main className="container px-4 py-8">
-        {/* Title */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
-          <p className="text-muted-foreground mt-1">
-            Overview of your business performance
-          </p>
-        </div>
+        <h1 className="text-3xl font-bold mb-6">Dashboard</h1>
 
-        {/* ✅ Stats Cards */}
+        {/* STATS */}
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 mb-8">
-          {statsCards.map((stat) => (
-            <Card key={stat.title}>
-              <CardHeader className="flex flex-row items-center justify-between pb-2">
-                <CardTitle className="text-sm font-medium text-muted-foreground">
-                  {stat.title}
+          {statsCards.map((s) => (
+            <Card key={s.title}>
+              <CardHeader className="flex flex-row justify-between pb-2">
+                <CardTitle className="text-sm text-muted-foreground">
+                  {s.title}
                 </CardTitle>
-
-                <div className="h-9 w-9 rounded-lg bg-primary/10 flex items-center justify-center">
-                  <stat.icon className="h-5 w-5 text-primary" />
-                </div>
+                <s.icon className="h-5 w-5 text-primary" />
               </CardHeader>
-
               <CardContent>
-                <div className="text-2xl font-bold">
-                  {loading ? "Loading..." : stat.value}
-                </div>
+                <div className="text-2xl font-bold">{s.value}</div>
               </CardContent>
             </Card>
           ))}
         </div>
 
-        {/* Charts */}
+        {/* CHARTS */}
         <div className="grid gap-6 lg:grid-cols-7 mb-8">
-          {/* Revenue Chart */}
           <Card className="lg:col-span-4">
             <CardHeader>
-              <div className="flex justify-between items-center">
-                <div>
-                  <CardTitle>Revenue Overview</CardTitle>
-                  <CardDescription>Monthly revenue trend</CardDescription>
-                </div>
-
-                <Tabs defaultValue="revenue">
-                  <TabsList>
-                    <TabsTrigger value="revenue">Revenue</TabsTrigger>
-                  </TabsList>
-                </Tabs>
-              </div>
+              <CardTitle>Revenue Overview</CardTitle>
             </CardHeader>
-
-            <CardContent>
-              <div className="h-[300px]">
-                <ResponsiveContainer width="100%" height="100%">
-                  <AreaChart data={revenueData}>
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="name" />
-                    <YAxis />
-                    <Tooltip />
-
-                    <Area
-                      type="monotone"
-                      dataKey="revenue"
-                      stroke="hsl(var(--primary))"
-                      fill="hsl(var(--primary))"
-                      fillOpacity={0.2}
-                    />
-                  </AreaChart>
-                </ResponsiveContainer>
-              </div>
+            <CardContent className="h-[300px]">
+              <ResponsiveContainer>
+                <AreaChart data={revenueData}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="name" />
+                  <YAxis />
+                  <Tooltip />
+                  <Area
+                    dataKey="revenue"
+                    stroke="#6366f1"
+                    fill="#6366f1"
+                    fillOpacity={0.2}
+                  />
+                </AreaChart>
+              </ResponsiveContainer>
             </CardContent>
           </Card>
 
-          {/* Payment Pie */}
           <Card className="lg:col-span-3">
             <CardHeader>
               <CardTitle>Payment Status</CardTitle>
-              <CardDescription>Payment outcomes distribution</CardDescription>
             </CardHeader>
-
-            <CardContent>
-              <div className="h-[250px]">
-                <ResponsiveContainer width="100%" height="100%">
-                  <PieChart>
-                    <Pie
-                      key={paymentStatusData.length}
-                      data={paymentStatusData}
-                      dataKey="value"
-                      innerRadius={60}
-                      outerRadius={90}
-                    >
-                      {paymentStatusData.map((entry, index) => (
-                        <Cell key={index} fill={entry.color} />
-                      ))}
-                    </Pie>
-
-                    <Tooltip />
-                  </PieChart>
-                </ResponsiveContainer>
-              </div>
+            <CardContent className="h-[250px]">
+              <ResponsiveContainer>
+                <PieChart>
+                  <Pie
+                    data={paymentStatusData}
+                    dataKey="value"
+                    innerRadius={60}
+                    outerRadius={90}
+                  >
+                    {paymentStatusData.map((e, i) => (
+                      <Cell key={i} fill={e.color} />
+                    ))}
+                  </Pie>
+                  <Tooltip />
+                </PieChart>
+              </ResponsiveContainer>
             </CardContent>
           </Card>
         </div>
 
-        {/* Recent Orders */}
+        {/* ORDERS */}
         <Card>
           <CardHeader>
             <CardTitle>Recent Orders</CardTitle>
-            <CardDescription>Latest transactions from store</CardDescription>
           </CardHeader>
-          {orders?.length > 0 && (
-            <CardContent className="space-y-4">
-              {orders?.length > 0 && (
-                <CardContent className="space-y-4">
-                  {orders.map((order) => (
-                    <div>
-                      <div
-                        key={order.id}
-                        className="flex items-center justify-between p-3 rounded-lg bg-muted/50"
-                      >
-                        {/* Left Side */}
-                        <div className="flex items-center gap-4">
-                          <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
-                            <Users className="h-5 w-5 text-primary" />
-                          </div>
+          <CardContent className="space-y-3">
+            {orders.map((order) => (
+              <div
+                key={order.id}
+                className="flex justify-between p-3 rounded bg-muted/50"
+              >
+                <div>
+                  <p className="font-medium">{order.order_id}</p>
+                  <p className="text-sm text-muted-foreground">
+                    User: {order.user_id.slice(0, 8)}...
+                  </p>
+                </div>
 
-                          <div>
-                            {/* Order ID */}
-                            <p className="font-medium">{order.order_id}</p>
-
-                            {/* User ID */}
-                            <p className="text-sm text-muted-foreground">
-                              User: {order.user_id.slice(0, 8)}...
-                            </p>
-                          </div>
-                        </div>
-
-                        {/* Right Side */}
-                        <div className="flex items-center gap-4">
-                          {/* Amount */}
-                          <p className="font-medium">
-                            ₹{order.amount.toFixed(2)}
-                          </p>
-
-                          {/* Status */}
-                          <Badge variant="outline">{order.order_status}</Badge>
-                          <Link
-                            href={`/admin/orders/userspecific?userId=${order.user_id}&orderId=${order.order_id}`}
-                          >
-                            <button className="ml-2 cursor-pointer">
-                              Show Details
-                            </button>
-                          </Link>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                  <Link href="/admin/orders">
-                    <Button>Show More</Button>
+                <div className="flex items-center gap-3">
+                  <span>₹{order.amount.toFixed(2)}</span>
+                  <Badge variant="outline">{order.order_status}</Badge>
+                  <Link
+                    href={`/admin/orders/userspecific?userId=${order.user_id}&orderId=${order.order_id}`}
+                  >
+                    Show
                   </Link>
-                </CardContent>
-              )}
-            </CardContent>
-          )}
+                </div>
+              </div>
+            ))}
+
+            <Link href="/admin/orders">
+              <Button className="mt-4">Show More</Button>
+            </Link>
+          </CardContent>
         </Card>
       </main>
     </div>
