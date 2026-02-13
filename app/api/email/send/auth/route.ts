@@ -24,14 +24,14 @@ export async function POST(req: NextRequest) {
     EmailTemplate({
       userEmail,
       content,
-    })
+    }),
   );
 
   try {
     const { data, error } = await resend.emails.send({
       from: `${process.env.EMAIL_FROM}`,
       to: [userEmail],
-      subject: "Nutrivya Website - [Customer Support]",
+      subject: "Tulsiveda Website - [Customer Support]",
       html,
     });
 

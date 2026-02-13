@@ -84,7 +84,7 @@ export function AppSidebar() {
           </Link>
         </SidebarGroup>
 
-        <SidebarGroup>
+        {/* <SidebarGroup>
           <Link href={"/profile/returns"}>
             {active === "returns" ? (
               <Button variant={"secondary"} className="w-full cursor-pointer">
@@ -100,7 +100,7 @@ export function AppSidebar() {
               </Button>
             )}
           </Link>
-        </SidebarGroup>
+        </SidebarGroup> */}
 
         <SidebarGroup>
           <Link href={"/profile/support"}>
