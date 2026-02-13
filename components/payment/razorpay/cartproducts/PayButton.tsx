@@ -34,6 +34,7 @@ export default function PayButton() {
       );
 
       if (!data?.success) {
+        console.log(data.success, data.error);
         throw new Error("Order creation failed");
       }
 

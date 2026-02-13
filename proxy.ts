@@ -20,10 +20,8 @@ export async function proxy(req: NextRequest) {
     }
   }
 
-  if (pathname.startsWith("/details")) {
-    if (token?.name) {
-      return NextResponse.redirect("/");
-    }
+  if (pathname.startsWith("/details") && !token) {
+    return NextResponse.redirect("/auth/getstarted");
   }
 
   if (pathname.startsWith("/profile") && !token) {

@@ -47,7 +47,7 @@ type Stats = {
   cancelledOrders: number;
 };
 
-type Order = {
+export type Order = {
   id: string;
   order_id: string;
   user_id: string;

@@ -10,8 +10,8 @@ import {
 } from "@/components/ui/pagination";
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { Order } from "../page";
 import Link from "next/link";
+import { Order } from "../page";
 
 const LIMIT = 10;
 

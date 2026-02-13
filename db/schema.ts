@@ -291,29 +291,26 @@ export const chats = pgTable("chats", {
   role: rolesEnum().notNull().default("support"),
 });
 
-export const orders = pgTable("orders", {
-  id: text("id")
-    .primaryKey()
-    .$defaultFn(() => crypto.randomUUID()),
-
-  order_id: text("order_id").notNull().unique(), // razorpay_order_id
-
-  user_id: text("user_id").notNull(),
-
-  amount: integer("amount").notNull(), // store in paise
-
-  currency: text("currency").notNull().default("INR"),
-
-  order_status: order_status("order_status").notNull(),
-
-  createdAt: timestamp("created_at", { withTimezone: true })
-    .notNull()
-    .defaultNow(),
-
-  updatedAt: timestamp("updated_at", { withTimezone: true })
-    .notNull()
-    .$onUpdate(() => new Date()),
-});
+export const orders = pgTable(
+  "orders",
+  {
+    id: text("id")
+      .primaryKey()
+      .$defaultFn(() => crypto.randomUUID()),
+    order_id: text("order_id").notNull().unique(),
+    user_id: text("user_id").notNull(),
+    amount: integer("amount").notNull(),
+    currency: text("currency").notNull(),
+    order_status: order_status("order_status").notNull(),
+    createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).$onUpdate(
+      () => new Date(),
+    ),
+  },
+  (t) => ({
+    userIdx: index("orders_user_id_idx").on(t.user_id),
+  }),
+);
 
 export const payments = pgTable("payments", {
   id: text("id")
@@ -342,25 +339,20 @@ export const payments = pgTable("payments", {
     .notNull()
     .defaultNow(),
 });
-export const orderItems = pgTable("order_items", {
-  id: text("id")
-    .primaryKey()
-    .$defaultFn(() => crypto.randomUUID()),
-
-  order_id: text("order_id")
-    .notNull()
-    .references(() => orders.order_id, { onDelete: "cascade" }),
-
-  product_id: text("product_id").notNull(),
-
-  price: integer("price").notNull(), // paise at time of purchase
-
-  quantity: integer("quantity").notNull().default(1),
-
-  createdAt: timestamp("created_at", { withTimezone: true })
-    .notNull()
-    .defaultNow(),
-});
+export const orderItems = pgTable(
+  "order_items",
+  {
+    id: text("id").primaryKey(),
+    order_id: text("order_id").notNull(),
+    product_id: text("product_id").notNull(),
+    price: integer("price").notNull(),
+    quantity: integer("quantity").notNull(),
+  },
+  (t) => ({
+    orderIdx: index("order_items_order_id_idx").on(t.order_id),
+    productIdx: index("order_items_product_id_idx").on(t.product_id),
+  }),
+);
 
 /////////////////////////END///////////////////////////////////
 export default {
