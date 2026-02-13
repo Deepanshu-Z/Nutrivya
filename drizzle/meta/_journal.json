@@ -253,6 +253,13 @@
       "when": 1770962040594,
       "tag": "0035_cultured_night_nurse",
       "breakpoints": true
+    },
+    {
+      "idx": 36,
+      "version": "7",
+      "when": 1770974837218,
+      "tag": "0036_nosy_miracleman",
+      "breakpoints": true
     }
   ]
 }

@@ -9,16 +9,6 @@ import { NextResponse } from "next/server";
 import { authOptions } from "../../auth/[...nextauth]/route";
 
 export async function POST(req: Request) {
-  const session = await getServerSession(authOptions);
-  //@ts-ignore
-  const userId = session?.user.id;
-  console.log(
-    "WEBHOOk RAANNNN!!!!!!!!!!",
-    "USER ID is: ",
-    userId,
-    "session is: ",
-    session,
-  );
   const body = await req.text();
   const signature = req.headers.get("x-razorpay-signature")!;
 
@@ -49,7 +39,6 @@ export async function POST(req: Request) {
 
         // 2. Create payment record
         await tx.insert(payments).values({
-          user_id: userId,
           order_id: payment.order_id, // 👈 FROM WEBHOOK
           payment_id: payment.id,
           signature, // webhook signature header
@@ -75,7 +64,6 @@ export async function POST(req: Request) {
           .where(eq(orders.order_id, payment.order_id));
 
         await tx.insert(payments).values({
-          user_id: userId,
           order_id: payment.order_id,
           payment_id: payment.id,
           amount: payment.amount / 100,

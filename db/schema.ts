@@ -321,8 +321,6 @@ export const payments = pgTable("payments", {
     .notNull()
     .references(() => orders.order_id, { onDelete: "cascade" }),
 
-  user_id: text("user_id").notNull(),
-
   payment_id: text("payment_id").notNull().unique(),
 
   signature: text("signature"),
