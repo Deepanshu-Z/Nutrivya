@@ -11,7 +11,7 @@ import { authOptions } from "../../auth/[...nextauth]/route";
 export async function POST(req: Request) {
   const body = await req.text();
   const signature = req.headers.get("x-razorpay-signature")!;
-
+  console.log("WEBHOOK RAN, SOMEONE SHOULD BE CALLED");
   const expectedSignature = crypto
     .createHmac("sha256", process.env.RAZORPAY_WEBHOOK_SECRET!)
     .update(body)
@@ -25,6 +25,8 @@ export async function POST(req: Request) {
 
   switch (event.event) {
     case "payment.captured": {
+      console.log("RUNNING FAILED WEBHOOK");
+
       const payment = event.payload.payment.entity;
 
       await db.transaction(async (tx) => {
@@ -52,6 +54,7 @@ export async function POST(req: Request) {
     }
 
     case "payment.failed": {
+      console.log("RUNNING FAILED WEBHOOK");
       const payment = event.payload.payment.entity;
 
       await db.transaction(async (tx) => {
