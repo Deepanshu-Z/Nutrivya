@@ -37,14 +37,21 @@ export async function GET() {
     .where(
       sql`${orders.user_id} = ${userId} AND ${payments.payment_status} = 'failed'`,
     );
+  const [createdOrders] = await db
+    .select({ count: sql<number>`cast(count(*) as int)` })
+    .from(orders)
+    .where(
+      sql`${orders.user_id} = ${userId} AND ${orders.order_status} = 'created'`,
+    );
 
-  // 4. Total Amount
-  const [totalResult] = await db
+  const [paidAmountResult] = await db
     .select({
       sum: sql<number>`cast(COALESCE(SUM(${orders.amount}), 0) as int)`,
     })
     .from(orders)
-    .where(eq(orders.user_id, userId));
+    .where(
+      sql`${orders.user_id} = ${userId} AND ${orders.order_status} = 'paid'`,
+    );
 
   return Response.json({
     success: true,
@@ -52,7 +59,8 @@ export async function GET() {
       totalOrders: totalOrders.count || 0,
       cancelledOrders: cancelledOrders.count || 0,
       failedPayments: failedPayments.count || 0,
-      totalAmount: (totalResult.sum || 0) / 100, // Convert paise to Rupees if needed
+      createdOrders: createdOrders.count || 0,
+      totalAmount: paidAmountResult.sum || 0, // Convert paise to Rupees if needed
     },
   });
 }

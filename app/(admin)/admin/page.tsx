@@ -12,6 +12,7 @@ import {
   Download,
   Filter,
   User,
+  ReceiptIndianRupee,
 } from "lucide-react";
 
 import {
@@ -38,6 +39,7 @@ type Stats = {
   totalOrders: number;
   failedPayments: number;
   cancelledOrders: number;
+  createdOrders: number;
 };
 
 export type Order = {
@@ -83,7 +85,6 @@ export default function Dashboard() {
   } = useQuery<Stats>({
     queryKey: ["admin-stats"],
     queryFn: fetchStats,
-    staleTime: 60_000,
   });
 
   const {
@@ -122,33 +123,50 @@ export default function Dashboard() {
   const totalOrdersCount = Number(stats.totalOrders) || 0;
   const failedCount = Number(stats.failedPayments) || 0;
   const cancelledCount = Number(stats.cancelledOrders) || 0;
-
+  const createdCount = Number(stats.createdOrders) || 0;
   // Logical calculation for "Successful"
   const successfulPayments = Math.max(
-    totalOrdersCount - failedCount - cancelledCount,
+    totalOrdersCount - failedCount - cancelledCount - createdCount,
     0,
   );
 
   const statsCards = [
     {
-      title: "Total Revenue",
+      title: "Paid Orders Value",
       value: `₹${Number(stats.totalAmount).toLocaleString("en-IN")}`,
-      icon: DollarSign,
+      icon: ReceiptIndianRupee,
+      link: "#",
     },
+
     {
       title: "Total Orders",
       value: totalOrdersCount,
       icon: ShoppingCart,
+      link: "/admin/orders",
+    },
+    {
+      title: "Total Paid Orders ",
+      value: successfulPayments,
+      icon: ReceiptIndianRupee,
+      link: "/admin/orders",
     },
     {
       title: "Failed Payments",
       value: failedCount,
       icon: XCircle,
+      link: "/admin/orders",
     },
     {
       title: "Cancelled Orders",
       value: cancelledCount,
       icon: CreditCard,
+      link: "/admin/orders",
+    },
+    {
+      title: "Pending Orders",
+      value: createdCount,
+      icon: CreditCard,
+      link: "/admin/orderes",
     },
   ];
 
@@ -187,17 +205,22 @@ export default function Dashboard() {
         {/* STATS CARDS */}
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 mb-8">
           {statsCards.map((s) => (
-            <Card key={s.title}>
-              <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
-                <CardTitle className="text-sm font-medium text-muted-foreground">
-                  {s.title}
-                </CardTitle>
-                <s.icon className="h-4 w-4 text-primary" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">{s.value}</div>
-              </CardContent>
-            </Card>
+            <Link href={s.link}>
+              <Card
+                className="transition-transform duration-300 hover:scale-110"
+                key={s.title}
+              >
+                <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
+                  <CardTitle className="text-sm font-medium text-muted-foreground">
+                    {s.title}
+                  </CardTitle>
+                  <s.icon className="h-4 w-4 text-primary" />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">{s.value}</div>
+                </CardContent>
+              </Card>
+            </Link>
           ))}
         </div>
 
