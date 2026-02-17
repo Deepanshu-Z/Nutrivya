@@ -47,16 +47,13 @@ export default function App() {
 
   async function saveProduct(data: any) {
     setLoading(true);
-    console.log("@@@DATA", data);
     if (imageUrl) data.galleryImages = imageUrl;
     const response = await axios.post("/api/admin/products/addproduct  ", data);
-    console.log(response.data);
     if (response.data.success) {
-      console.log("product added!");
       const id = response.data.id[0].id;
       setLoading(false);
       router.replace(`/shop/${id}`);
-    } else console.log("Please try again");
+    } else alert("Please try again");
   }
 
   useEffect(() => {
@@ -87,7 +84,7 @@ export default function App() {
         {
           method: "POST",
           body: formData,
-        }
+        },
       );
 
       const data = await res.json();

@@ -51,21 +51,21 @@ const Page = () => {
     fetchOrders();
   }, [page, statusFilter]);
 
-  const fetchUserDetails = async (userId: string, orderId: string) => {
-    const response = await axios.get(
-      `/api/admin/transactions/userspecific?userId=${userId}&orderId=${orderId}`,
-    );
-    if (response.data.success) {
-      console.log(
-        "User Details: ",
-        response.data.details.userDetails,
-        "Specific Transaction details: ",
-        response.data.details.specificTransaction,
-        "All Transaction Performed by user details: ",
-        response.data.details.allTransactions,
-      );
-    } else console.log("ERROR:!!!!!!!!", response.data.error);
-  };
+  // const fetchUserDetails = async (userId: string, orderId: string) => {
+  //   const response = await axios.get(
+  //     `/api/admin/transactions/userspecific?userId=${userId}&orderId=${orderId}`,
+  //   );
+  //   if (response.data.success) {
+  //     console.log(
+  //       "User Details: ",
+  //       response.data.details.userDetails,
+  //       "Specific Transaction details: ",
+  //       response.data.details.specificTransaction,
+  //       "All Transaction Performed by user details: ",
+  //       response.data.details.allTransactions,
+  //     );
+  //   } else console.log("ERROR:!!!!!!!!", response.data.error);
+  // };
 
   return (
     <div className="space-y-6">

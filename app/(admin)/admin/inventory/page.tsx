@@ -51,7 +51,6 @@ const page = () => {
   const [products, setProducts] = useState<ProductType[]>([]);
   const fetchAllProducts = async () => {
     const response = await axios.get("/api/admin/products/getallproducts");
-    console.log(response.data.response);
     setProducts(response.data.response);
   };
 
@@ -59,7 +58,6 @@ const page = () => {
     const response = await axios.delete("/api/admin/products/deleteproduct", {
       data: { productId: id },
     });
-    console.log(response.data);
     if (response.data.success) {
     } else {
     }

@@ -56,7 +56,6 @@ export default function Page() {
     ]);
 
     setBtnLoading(true);
-    console.log("EMAIL IS: ", chats[0].userEmail);
     const response = await axios.post("/api/email/send/auth", {
       ticketId,
       userEmail: chats[0].userEmail,

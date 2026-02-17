@@ -61,14 +61,13 @@ export default function Page() {
     if (imageUrl) data.galleryImages = imageUrl;
     const response = await axios.put(
       `/api/admin/products/updateproduct/${id}`,
-      data
+      data,
     );
-    console.log(response.data);
     if (response.data.success) {
       const id = response.data.update[0].id;
       setLoading(false);
       router.replace(`/shop/${id}`);
-    } else console.log(response.data.error);
+    } else alert(response.data.error);
     setLoading(false);
   }
 
@@ -136,7 +135,7 @@ export default function Page() {
         {
           method: "POST",
           body: formData,
-        }
+        },
       );
 
       const data = await res.json();
@@ -156,7 +155,7 @@ export default function Page() {
 
     if (response.data.success) console.log("successfully deleted");
     else {
-      console.log("ERROR", response.data.error);
+      alert("ERROR");
     }
     setImageLoading(false);
   };

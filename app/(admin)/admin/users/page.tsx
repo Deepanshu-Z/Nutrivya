@@ -94,12 +94,10 @@ export default function UsersPage() {
       data: { userId: id },
     });
 
-    console.log(response.data.body);
     if (response.data.success) {
-      console.log(response.data.message);
       window.location.reload();
     } else {
-      console.log(response.data.error);
+      alert(response.data.error);
     }
   };
   return (

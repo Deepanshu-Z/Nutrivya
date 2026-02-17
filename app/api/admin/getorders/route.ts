@@ -11,7 +11,6 @@ export const GET = async (req: Request) => {
   const offset = (page - 1) * limit;
   type OrderStatus = "created" | "paid" | "failed" | "cancelled";
 
-  console.log(status);
   try {
     const whereCondition =
       status && status !== "ALL"

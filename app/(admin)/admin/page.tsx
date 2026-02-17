@@ -32,6 +32,7 @@ import {
 import axios from "axios";
 import Link from "next/link";
 import { useQuery } from "@tanstack/react-query";
+import { exportPDF } from "@/lib/admin/export/pdf";
 
 // ---------------- TYPES ----------------
 type MonthlyData = {
@@ -69,17 +70,6 @@ const fetchOrders = async (): Promise<Order[]> => {
   if (!res.data.success) throw new Error("Orders fetch failed");
   return res.data.recentOrders;
 };
-
-// ---------------- STATIC DATA ----------------
-const revenueData = [
-  { name: "Jan", revenue: 4000 },
-  { name: "Feb", revenue: 3000 },
-  { name: "Mar", revenue: 5000 },
-  { name: "Apr", revenue: 4500 },
-  { name: "May", revenue: 6000 },
-  { name: "Jun", revenue: 5500 },
-  { name: "Jul", revenue: 7000 },
-];
 
 // ---------------- COMPONENT ----------------
 export default function Dashboard() {
@@ -185,17 +175,17 @@ export default function Dashboard() {
           </div>
 
           <div className="flex gap-2">
-            <Button variant="outline" size="sm">
+            <Button onClick={exportPDF} size="sm">
               <Download className="h-4 w-4 mr-1" /> Export
-            </Button>
-            <Button size="sm">
-              <Filter className="h-4 w-4 mr-1" /> Filters
             </Button>
           </div>
         </div>
       </header>
 
-      <main className="container px-4 py-8 max-w-7xl mx-auto">
+      <main
+        id="admin-report"
+        className="pdf-safe container px-4 py-8 max-w-7xl mx-auto"
+      >
         <h1 className="text-3xl font-bold mb-6">Dashboard Overview</h1>
 
         {/* STATS CARDS */}

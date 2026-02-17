@@ -65,7 +65,6 @@ export default function UserSpecificAction() {
   /* ---------------- FETCH DATA ---------------- */
 
   useEffect(() => {
-    console.log(userId);
     if (!userId) return;
 
     const fetchData = async () => {
