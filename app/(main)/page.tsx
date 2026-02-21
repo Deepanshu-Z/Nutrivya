@@ -6,11 +6,13 @@ import Products from "@/components/landing/Products";
 import Integrations from "@/components/landing/Integrations";
 import Features from "@/components/landing/Features";
 import Categories from "@/components/landing/Categories";
+import HeroSlider from "../../components/landing/HeroSlider";
 
 export default function Home() {
   return (
     <div>
-      <Hero />
+      {/* <Hero /> */}
+      <HeroSlider />
       <Features />
       <Products />
       <Categories />
